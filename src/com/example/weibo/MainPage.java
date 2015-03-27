@@ -52,6 +52,10 @@ public class MainPage extends Activity implements OnClickListener,
 		mSwitchMenuButton = (ImageButton) findViewById(R.id.button_menu_switch);
 		mSwitchMenuButton.setOnClickListener(this);
 
+		initListView();
+	}
+
+	private void initListView() {
 		mListView = (ListView) findViewById(R.id.id_listview);
 		mSwipeLayout = (SwipeRefreshLayout) findViewById(R.id.id_swipe_ly);
 
@@ -63,6 +67,11 @@ public class MainPage extends Activity implements OnClickListener,
 		mAdapter = new ArrayAdapter<String>(this,
 				android.R.layout.simple_list_item_1, mDatas);
 		mListView.setAdapter(mAdapter);
+
+	}
+
+	public void onRefresh() {
+		mHandler.sendEmptyMessageDelayed(REFRESH_COMPLETE, 2000);
 	}
 
 	@Override
@@ -84,10 +93,5 @@ public class MainPage extends Activity implements OnClickListener,
 			break;
 
 		}
-	}
-
-	public void onRefresh() {
-		mHandler.sendEmptyMessageDelayed(REFRESH_COMPLETE, 2000);
-
 	}
 }

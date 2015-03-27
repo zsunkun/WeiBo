@@ -58,8 +58,6 @@ public class SlidingMenu extends FrameLayout {
 	protected void onLayout(boolean changed, int l, int t, int r, int b) {
 		super.onLayout(changed, l, t, r, b);
 		if (changed) {
-			// ½«²Ëµ¥Òþ²Ø
-			// this.scrollTo(mMenuWidth, 0);
 			mMenuParams.leftMargin = -mMenuWidth;
 			mIsMenuOpen = false;
 			mFirst = false;
@@ -120,11 +118,9 @@ public class SlidingMenu extends FrameLayout {
 
 	public void toggleMenu() {
 		if (mIsMenuOpen) {
-			// this.scrollTo(mMenuWidth, 0);
 			new MoveTask().execute(-mMenuWidth);
 			mIsMenuOpen = false;
 		} else {
-			// this.scrollTo(0, 0);
 			new MoveTask().execute(0);
 			mIsMenuOpen = true;
 		}
