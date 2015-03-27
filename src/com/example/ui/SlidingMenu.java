@@ -2,13 +2,12 @@ package com.example.ui;
 
 import com.example.utils.DisplayUtils;
 
-import android.R.menu;
 import android.content.Context;
+import android.os.AsyncTask;
+import android.os.SystemClock;
 import android.util.AttributeSet;
-import android.view.MotionEvent;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
-import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 
 public class SlidingMenu extends FrameLayout {
@@ -63,9 +62,6 @@ public class SlidingMenu extends FrameLayout {
 		}
 	}
 
-	float startX = 0;
-	float endX = 0;
-
 	// @Override
 	// public boolean onTouchEvent(MotionEvent ev) {
 	// int action = ev.getAction();
@@ -96,14 +92,42 @@ public class SlidingMenu extends FrameLayout {
 	public void toggleMenu() {
 		if (mIsMenuOpen) {
 			// this.scrollTo(mMenuWidth, 0);
-			mMenuParams.leftMargin = -mMenuWidth;
-			mMenu.setLayoutParams(mMenuParams);
+			new MoveTask().execute(-mMenuWidth);
 			mIsMenuOpen = false;
 		} else {
 			// this.scrollTo(0, 0);
-			mMenuParams.leftMargin = 0;
-			mMenu.setLayoutParams(mMenuParams);
+			new MoveTask().execute(0);
 			mIsMenuOpen = true;
+		}
+	}
+
+	class MoveTask extends AsyncTask<Integer, Void, Void> {
+
+		@Override
+		protected Void doInBackground(Integer... params) {
+			int width = params[0];
+			if (width < 0) {
+				for (int i = 0; i > -mMenuWidth - 6;) {
+					mMenuParams.leftMargin = i;
+					i = i - 5;
+					publishProgress(null);
+					SystemClock.sleep(1);
+				}
+			} else {
+				for (int i = -mMenuWidth; i < 6;) {
+					mMenuParams.leftMargin = i;
+					i = i + 5;
+					publishProgress(null);
+					SystemClock.sleep(1);
+
+				}
+			}
+			return null;
+		}
+
+		@Override
+		protected void onProgressUpdate(Void... values) {
+			mMenu.setLayoutParams(mMenuParams);
 		}
 	}
 }
