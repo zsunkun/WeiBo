@@ -1,11 +1,14 @@
 package com.example.ui;
 
 import com.example.utils.DisplayUtils;
+import com.example.weibo.R;
 
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.SystemClock;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
@@ -14,7 +17,7 @@ public class SlidingMenu extends FrameLayout {
 
 	private int mScreenWidth;
 	private int mMenuRightPadding = 50;
-	private int mSafeWidth = 10;
+	private int mSafeWidth = 50;
 	private int mMenuWidth;
 	private int mHalfMenuWidth;
 	private boolean mIsMenuOpen;
@@ -33,6 +36,7 @@ public class SlidingMenu extends FrameLayout {
 	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
 		if (mFirst) {
 			LinearLayout wrapper = (LinearLayout) getChildAt(0);
+			findViewById(R.id.id_listview).setOnTouchListener(listener);
 			mMenu = (ViewGroup) wrapper.getChildAt(0);
 			mContent = (ViewGroup) wrapper.getChildAt(1);
 			// dp to px
@@ -62,32 +66,57 @@ public class SlidingMenu extends FrameLayout {
 		}
 	}
 
-	// @Override
-	// public boolean onTouchEvent(MotionEvent ev) {
-	// int action = ev.getAction();
-	// switch (action) {
-	// case MotionEvent.ACTION_UP:
-	// int scrollX = getScrollX();
-	// if (scrollX > mHalfMenuWidth) {
-	// this.smoothScrollTo(mMenuWidth, 0);
-	// mIsMenuOpen = false;
-	// } else {
-	// this.smoothScrollTo(0, 0);
-	// mIsMenuOpen = true;
-	// }
-	// return true;
-	// case MotionEvent.ACTION_MOVE:
-	// endX = ev.getX();
-	// if (Math.abs(endX - startX) > mSafeWidth) {
-	// //TODO
-	// }
-	// break;
-	// case MotionEvent.ACTION_DOWN:
-	// startX = ev.getX();
-	// break;
-	// }
-	// return super.onTouchEvent(ev);
-	// }
+	private OnTouchListener listener = new OnTouchListener() {
+		private float startX = 0;
+		private float endX = 0;
+
+		@Override
+		public boolean onTouch(View v, MotionEvent ev) {
+			int action = ev.getAction();
+			switch (action) {
+			case MotionEvent.ACTION_UP:
+				endX = ev.getRawX();
+				float finalDelta = endX - startX;
+				if (finalDelta > mHalfMenuWidth && !mIsMenuOpen) {
+					mMenuParams.leftMargin = 0;
+					mMenu.setLayoutParams(mMenuParams);
+					mIsMenuOpen = true;
+				}
+				if (finalDelta < -mHalfMenuWidth && mIsMenuOpen) {
+					mMenuParams.leftMargin = -mMenuWidth;
+					mMenu.setLayoutParams(mMenuParams);
+					mIsMenuOpen = false;
+				}
+				if (finalDelta < mHalfMenuWidth && finalDelta > 0
+						&& !mIsMenuOpen) {
+					mMenuParams.leftMargin = -mMenuWidth;
+					mMenu.setLayoutParams(mMenuParams);
+				}
+				if (finalDelta < 0 && finalDelta > (-mHalfMenuWidth)
+						&& mIsMenuOpen) {
+					mMenuParams.leftMargin = 0;
+					mMenu.setLayoutParams(mMenuParams);
+				}
+				break;
+			case MotionEvent.ACTION_MOVE:
+				endX = ev.getRawX();
+				float delta = endX - startX;
+				if (delta > mSafeWidth && !mIsMenuOpen) {
+					mMenuParams.leftMargin = (int) (-mMenuWidth + delta);
+					mMenu.setLayoutParams(mMenuParams);
+				}
+				if (delta < (-mSafeWidth) && mIsMenuOpen) {
+					mMenuParams.leftMargin = (int) (0 + delta);
+					mMenu.setLayoutParams(mMenuParams);
+				}
+				break;
+			case MotionEvent.ACTION_DOWN:
+				startX = ev.getRawX();
+				break;
+			}
+			return false;
+		}
+	};
 
 	public void toggleMenu() {
 		if (mIsMenuOpen) {
