@@ -5,6 +5,7 @@ import com.example.utils.DisplayUtils;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
@@ -13,6 +14,7 @@ public class SlidingMenu extends HorizontalScrollView {
 
 	private int mScreenWidth;
 	private int mMenuRightPadding = 50;
+	private int mSafeWidth = 10;
 	private int mMenuWidth;
 	private int mHalfMenuWidth;
 	private boolean mIsMenuOpen;
@@ -34,6 +36,7 @@ public class SlidingMenu extends HorizontalScrollView {
 			mMenuRightPadding = DisplayUtils.getPixel(getContext(),
 					mMenuRightPadding);
 			mMenuWidth = mScreenWidth - mMenuRightPadding;
+			mSafeWidth = DisplayUtils.getPixel(getContext(), mSafeWidth);
 			mHalfMenuWidth = mMenuWidth / 2;
 			menu.getLayoutParams().width = mMenuWidth;
 			content.getLayoutParams().width = mScreenWidth;
@@ -53,11 +56,13 @@ public class SlidingMenu extends HorizontalScrollView {
 		}
 	}
 
+	float startX = 0;
+	float endX = 0;
+
 	@Override
 	public boolean onTouchEvent(MotionEvent ev) {
 		int action = ev.getAction();
 		switch (action) {
-		// Up时，进行判断，如果显示区域大于菜单宽度一半则完全显示，否则隐藏
 		case MotionEvent.ACTION_UP:
 			int scrollX = getScrollX();
 			if (scrollX > mHalfMenuWidth) {
@@ -68,6 +73,17 @@ public class SlidingMenu extends HorizontalScrollView {
 				mIsMenuOpen = true;
 			}
 			return true;
+		case MotionEvent.ACTION_MOVE:
+			endX = ev.getX();
+			if (Math.abs(endX - startX) < mSafeWidth) {
+				System.out.println("Math:---" + Math.abs(endX - startX));
+				return true;
+			}
+			break;
+		case MotionEvent.ACTION_DOWN:
+			startX = ev.getX();
+			System.out.println("-----"+startX);
+			break;
 		}
 		return super.onTouchEvent(ev);
 	}

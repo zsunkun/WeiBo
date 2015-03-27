@@ -17,14 +17,15 @@
             android:layout_height="fill_parent"
             android:background="@drawable/background_home" >
 
+            <include layout="@layout/layout_pull_to_refresh" />
+
             <ImageButton
                 android:id="@+id/button_menu_switch"
                 android:layout_width="18dp"
                 android:layout_height="20dp"
                 android:layout_marginTop="15dp"
                 android:background="@drawable/img_switch_menu"
-                android:padding="5dp" />
-
+                android:padding="10dp" />
         </FrameLayout>
     </LinearLayout>
 
