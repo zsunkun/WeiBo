@@ -14,7 +14,7 @@
         <FrameLayout
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:background="@drawable/background_home" >
+            android:background="@drawable/background_home_two" >
 
             <include layout="@layout/layout_pull_to_refresh" />
 
