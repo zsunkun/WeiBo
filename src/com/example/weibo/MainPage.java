@@ -30,6 +30,7 @@ import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainPage extends Activity implements OnClickListener,
@@ -39,21 +40,17 @@ public class MainPage extends Activity implements OnClickListener,
 
 		@Override
 		public void onComplete(String arg0) {
-			// TODO Auto-generated method stub
-
 			refresh(arg0);
 
 		}
 
 		@Override
 		public void onError(WeiboException arg0) {
-			// TODO Auto-generated method stub
 			Log.i("WeiboActivity", "onError :" + arg0.getMessage());
 		}
 
 		@Override
 		public void onIOException(IOException arg0) {
-			// TODO Auto-generated method stub
 
 		}
 
@@ -69,6 +66,7 @@ public class MainPage extends Activity implements OnClickListener,
 	private JSONArray weibo_array;
 	private Handler handler;
 	private StatusesAPI statuses;
+	private TextView mTopUserName;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -76,9 +74,12 @@ public class MainPage extends Activity implements OnClickListener,
 		setContentView(R.layout.activity_main_page);
 		mMenu = (SlidingMenu) findViewById(R.id.menu);
 		mSwitchMenuButton = (ImageButton) findViewById(R.id.button_menu_switch);
+		mTopUserName = (TextView) findViewById(R.id.text_user_name);
+		String userName = UserCurrent.currentUser.getUser_name();
+		if (userName != null)
+			mTopUserName.setText(userName);
 		mSwitchMenuButton.setOnClickListener(this);
 		handler = new Handler();
-
 		initListView();
 	}
 
@@ -129,17 +130,18 @@ public class MainPage extends Activity implements OnClickListener,
 		try {
 			weibo_json = new JSONObject(arg0);
 			weibo_array = weibo_json.getJSONArray("statuses");
-			mAdapter = new WeiBoListAdapter(this, weibo_array);
+			if (mAdapter != null)
+				mAdapter.updateData(weibo_array);
+			else {
+				mAdapter = new WeiBoListAdapter(this, weibo_array);
+				handler.post(new Runnable() {
 
-			handler.post(new Runnable() {
-
-				@Override
-				public void run() {
-					mListView.setAdapter(mAdapter);
-
-				}
-			});
-
+					@Override
+					public void run() {
+						mListView.setAdapter(mAdapter);
+					}
+				});
+			}
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}

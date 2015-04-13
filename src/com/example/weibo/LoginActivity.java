@@ -33,6 +33,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.Button;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class LoginActivity extends Activity implements OnClickListener {
@@ -43,6 +44,7 @@ public class LoginActivity extends Activity implements OnClickListener {
 	private Spinner mUserSpinner;
 	private List<User> mUserData;
 	private User mCurrentUser;
+	private TextView mAuthRemind;
 
 	@SuppressLint("NewApi")
 	@Override
@@ -52,12 +54,14 @@ public class LoginActivity extends Activity implements OnClickListener {
 		mLoginButton = (Button) findViewById(R.id.login_submit);
 		mAuthButton = (Button) findViewById(R.id.login_authorize);
 		mUserSpinner = (Spinner) findViewById(R.id.login_spinner);
+		mAuthRemind = (TextView) findViewById(R.id.login_auth_remind);
 		mLoginButton.setOnClickListener(this);
 		mAuthButton.setOnClickListener(this);
 		UserHandler user = new UserHandler(this);
 		mUserData = user.findAllUsers();
 
 		if (mUserData == null || mUserData.isEmpty()) {
+			mAuthRemind.setVisibility(View.VISIBLE);
 			startAuth();
 		} else {
 			List<HashMap<String, Object>> userList = new ArrayList<HashMap<String, Object>>();

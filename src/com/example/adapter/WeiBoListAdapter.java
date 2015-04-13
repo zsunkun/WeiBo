@@ -50,6 +50,10 @@ public class WeiBoListAdapter extends BaseAdapter {
 		return position;
 	}
 
+	public void updateData(JSONArray jsonArray) {
+		mJsonArray = jsonArray;
+	}
+
 	@Override
 	public View getView(final int position, View convertView, ViewGroup parent) {
 		holder = null;
