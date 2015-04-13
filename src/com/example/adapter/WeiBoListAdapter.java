@@ -10,6 +10,8 @@ import com.example.utils.NetworkUtils;
 import com.example.utils.Tools;
 import com.example.weibo.R;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.util.Log;
@@ -29,10 +31,15 @@ public class WeiBoListAdapter extends BaseAdapter {
 	private Context mContext;
 	private JSONArray mJsonArray;
 	private String textImage;
+	private Dialog mOriginalPicDialog;
+	private View mOriginalPicView;
 
 	public WeiBoListAdapter(Context context, JSONArray jsonArray) {
 		mContext = context;
 		mJsonArray = jsonArray;
+		mOriginalPicDialog = new AlertDialog.Builder(mContext).create();
+		mOriginalPicView = LayoutInflater.from(mContext).inflate(
+				R.layout.view_weibo_original_pic, null);
 	}
 
 	@Override
@@ -84,8 +91,8 @@ public class WeiBoListAdapter extends BaseAdapter {
 			holder.tv_comment = (TextView) convertView
 					.findViewById(R.id.weibo_item_comment);
 
-			// holder.image_original_pic = (ImageView) view
-			// .findViewById(R.id.iv_original_pic);
+			holder.image_original_pic = (ImageView) mOriginalPicView
+					.findViewById(R.id.iv_original_pic);
 
 			convertView.setTag(holder);
 
@@ -118,9 +125,7 @@ public class WeiBoListAdapter extends BaseAdapter {
 					if (((JSONObject) getItem(position)).has("original_pic")) {
 
 						try {
-							String iv_original_pic_url =
-
-							((JSONObject) getItem(position))
+							String iv_original_pic_url = ((JSONObject) getItem(position))
 									.getString("original_pic");
 							holder.image_original_pic
 									.setTag(iv_original_pic_url);
@@ -134,15 +139,15 @@ public class WeiBoListAdapter extends BaseAdapter {
 										public void imageSet(Bitmap bitmap,
 												ImageView iv) {
 											iv.setImageBitmap(bitmap);
+											holder.image_original_pic
+													.setImageBitmap(bitmap);
+											mOriginalPicDialog.show();
+											mOriginalPicDialog
+													.setContentView(mOriginalPicView);
 										}
 									});
-							if (xxxx != null) {
-								holder.image_original_pic.setImageBitmap(xxxx);
-								// dialog_original_pic.show();
-							}
 
 						} catch (JSONException e) {
-							// TODO Auto-generated catch
 							// block
 							e.printStackTrace();
 							Toast.makeText(mContext, "未获取到原始图片，请稍后再试",

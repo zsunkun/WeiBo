@@ -1,10 +1,6 @@
 package com.example.weibo;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -27,7 +23,6 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -130,14 +125,20 @@ public class MainPage extends Activity implements OnClickListener,
 		try {
 			weibo_json = new JSONObject(arg0);
 			weibo_array = weibo_json.getJSONArray("statuses");
-			if (mAdapter != null)
-				mAdapter.updateData(weibo_array);
-			else {
-				mAdapter = new WeiBoListAdapter(this, weibo_array);
-				handler.post(new Runnable() {
-
+			if (mAdapter != null) {
+				runOnUiThread(new Runnable() {
 					@Override
 					public void run() {
+						mAdapter.updateData(weibo_array);
+						mAdapter.notifyDataSetChanged();
+					}
+				});
+			} else {
+				handler.post(new Runnable() {
+					@Override
+					public void run() {
+						mAdapter = new WeiBoListAdapter(MainPage.this,
+								weibo_array);
 						mListView.setAdapter(mAdapter);
 					}
 				});
