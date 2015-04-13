@@ -1,6 +1,7 @@
 package com.example.weibo;
 
 import java.io.IOException;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -23,6 +24,8 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.AbsListView;
+import android.widget.AbsListView.OnScrollListener;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -33,9 +36,18 @@ public class MainPage extends Activity implements OnClickListener,
 
 	class MyRequestListener implements RequestListener {
 
+		private boolean mIsLoadMoreData = false;
+
+		private MyRequestListener(boolean isLoadMoreData) {
+			mIsLoadMoreData = isLoadMoreData;
+		}
+
 		@Override
 		public void onComplete(String arg0) {
-			refresh(arg0);
+			if (!mIsLoadMoreData)
+				refresh(arg0);
+			else
+				refreshForMoreData(arg0);
 
 		}
 
@@ -60,8 +72,10 @@ public class MainPage extends Activity implements OnClickListener,
 	private WeiBoListAdapter mAdapter;
 	private JSONArray weibo_array;
 	private Handler handler;
-	private StatusesAPI statuses;
+	private StatusesAPI mStatuses;
 	private TextView mTopUserName;
+	private int mPageCount = 1;
+	private final int maxItemPerPage = 20;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -80,6 +94,7 @@ public class MainPage extends Activity implements OnClickListener,
 
 	private void initListView() {
 		mListView = (ListView) findViewById(R.id.id_listview);
+		mListView.setOnScrollListener(new OnScrollListenerImpl());
 		mSwipeLayout = (SwipeRefreshLayout) findViewById(R.id.id_swipe_ly);
 
 		mSwipeLayout.setOnRefreshListener(this);
@@ -90,9 +105,9 @@ public class MainPage extends Activity implements OnClickListener,
 		Oauth2AccessToken o2at = AccessTokenKeeper.readAccessToken(this,
 				UserCurrent.currentUser.getUser_id());
 
-		statuses = new StatusesAPI(o2at);
-		statuses.friendsTimeline(0l, 0l, 20, 1, false, WeiboAPI.FEATURE.ALL,
-				false, new MyRequestListener());
+		mStatuses = new StatusesAPI(o2at);
+		mStatuses.friendsTimeline(0l, 0l, maxItemPerPage, 1, false,
+				WeiboAPI.FEATURE.ALL, false, new MyRequestListener(false));
 
 	}
 
@@ -101,9 +116,9 @@ public class MainPage extends Activity implements OnClickListener,
 			protected Void doInBackground(Void... params) {
 				try {
 					Thread.sleep(1000);
-					statuses.friendsTimeline(0l, 0l, 20, 1, false,
-							WeiboAPI.FEATURE.ALL, false,
-							new MyRequestListener());
+					mStatuses.friendsTimeline(0l, 0l, maxItemPerPage, 1, false,
+							WeiboAPI.FEATURE.ALL, false, new MyRequestListener(
+									false));
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -117,6 +132,30 @@ public class MainPage extends Activity implements OnClickListener,
 				mSwipeLayout.setRefreshing(false);
 			}
 
+		}.execute();
+	}
+
+	private void loadMoreData() {
+		mPageCount++;
+		new AsyncTask<Void, Void, Void>() {
+			protected Void doInBackground(Void... params) {
+				try {
+					Thread.sleep(1000);
+					mStatuses.friendsTimeline(0l, 0l, maxItemPerPage,
+							mPageCount, false, WeiboAPI.FEATURE.ALL, false,
+							new MyRequestListener(true));
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				return null;
+			}
+
+			@Override
+			protected void onPostExecute(Void result) {
+
+				mAdapter.notifyDataSetChanged();
+				mSwipeLayout.setRefreshing(false);
+			}
 		}.execute();
 	}
 
@@ -146,6 +185,45 @@ public class MainPage extends Activity implements OnClickListener,
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
+	}
+
+	private void refreshForMoreData(String arg0) {
+		JSONObject weibo_json;
+		try {
+			weibo_json = new JSONObject(arg0);
+			weibo_array = weibo_json.getJSONArray("statuses");
+			runOnUiThread(new Runnable() {
+				@Override
+				public void run() {
+					if (mAdapter != null) {
+						mAdapter.updateForMoreData(weibo_array);
+						mAdapter.notifyDataSetChanged();
+					}
+				}
+			});
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private class OnScrollListenerImpl implements OnScrollListener {
+		@Override
+		public void onScroll(AbsListView listView, int firstVisibleItem,
+				int visibleItemCount, int totalItemCount) {
+		}
+
+		@Override
+		public void onScrollStateChanged(AbsListView listview, int scrollState) {
+			// 当不滚动时
+			if (scrollState == OnScrollListener.SCROLL_STATE_IDLE) {
+				// 判断是否滚动到底部
+				if (listview.getLastVisiblePosition() == listview.getCount() - 1) {
+					// 加载更多功能的代码
+					loadMoreData();
+				}
+			}
+		}
+
 	}
 
 	@Override

@@ -61,6 +61,12 @@ public class WeiBoListAdapter extends BaseAdapter {
 		mJsonArray = jsonArray;
 	}
 
+	public void updateForMoreData(JSONArray jsonArray) {
+		for (int i = 0; i < jsonArray.length(); i++) {
+			mJsonArray.put(jsonArray.optJSONObject(i));
+		}
+	}
+
 	@Override
 	public View getView(final int position, View convertView, ViewGroup parent) {
 		holder = null;
