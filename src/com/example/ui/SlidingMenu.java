@@ -16,8 +16,8 @@ import android.widget.LinearLayout;
 public class SlidingMenu extends FrameLayout {
 
 	private int mScreenWidth;
-	private int mMenuRightPadding = 50;
-	private int mSafeWidth = 50;
+	private int mMenuRightPadding = 20;
+	private int mSafeWidth = 30;
 	private int mMenuWidth;
 	private int mHalfMenuWidth;
 	private boolean mIsMenuOpen;

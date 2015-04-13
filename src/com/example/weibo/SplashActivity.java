@@ -1,5 +1,8 @@
 package com.example.weibo;
 
+import com.example.utils.Constants;
+import com.example.utils.DefaultProperties;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -11,6 +14,7 @@ import android.widget.ImageView;
 public class SplashActivity extends Activity {
 
 	private ImageView mSplashLogo;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -35,11 +39,17 @@ public class SplashActivity extends Activity {
 
 			@Override
 			public void onAnimationEnd(Animation animation) {
-				startActivity(new Intent(SplashActivity.this, MainPage.class));
+				if (DefaultProperties.getBoolPref(SplashActivity.this,
+						Constants.KEY_IS_USER_LOGIN, false))
+					startActivity(new Intent(SplashActivity.this,
+							MainPage.class));
+				else
+					startActivity(new Intent(SplashActivity.this,
+							LoginActivity.class));
 				finish();
 			}
 
 		});
 	}
-	
+
 }

@@ -3,4 +3,8 @@
 
     <color name="white">#FFFFFF</color>
     <color name="blue">#0000FF</color>
+    <color name="gray">#ababab</color>
+    <color name="gray_dark">#545454</color>
+    <color name="blue_light">#e624b1d4</color>
+    <color name="blue_dark">#1c558b</color>
 </resources>
