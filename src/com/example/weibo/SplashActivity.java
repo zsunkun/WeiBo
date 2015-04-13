@@ -1,8 +1,5 @@
 package com.example.weibo;
 
-import com.example.utils.Constants;
-import com.example.utils.DefaultProperties;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -39,17 +36,14 @@ public class SplashActivity extends Activity {
 
 			@Override
 			public void onAnimationEnd(Animation animation) {
-				if (DefaultProperties.getBoolPref(SplashActivity.this,
-						Constants.KEY_IS_USER_LOGIN, false))
-					startActivity(new Intent(SplashActivity.this,
-							MainPage.class));
-				else
-					startActivity(new Intent(SplashActivity.this,
-							LoginActivity.class));
-				finish();
+				startLogin();
 			}
 
 		});
 	}
 
+	private void startLogin() {
+		startActivity(new Intent(this, LoginActivity.class));
+		this.finish();
+	}
 }

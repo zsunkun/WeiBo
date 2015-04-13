@@ -12,6 +12,7 @@ import org.json.JSONObject;
 import com.example.adapter.WeiBoListAdapter;
 import com.example.api.AccessTokenKeeper;
 import com.example.ui.SlidingMenu;
+import com.example.weibo.LoginActivity.UserCurrent;
 import com.weibo.sdk.android.Oauth2AccessToken;
 import com.weibo.sdk.android.WeiboException;
 import com.weibo.sdk.android.api.StatusesAPI;

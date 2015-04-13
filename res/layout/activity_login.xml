@@ -9,47 +9,71 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
+        android:layout_marginTop="50dp"
         android:drawablePadding="5dp"
         android:gravity="center"
         android:padding="8dp"
         android:text="账户登录"
-        android:textSize="25sp"
         android:textColor="@color/gray_dark"
+        android:textSize="25sp"
         android:textStyle="bold" />
 
-    <EditText
-        android:id="@+id/edit_account"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="120dp"
-        android:background="@drawable/shape_blue_outlined_rectangle"
-        android:hint="请输入您的微博账号"
-        android:padding="10dp"
-        android:textSize="14sp" />
-
-    <EditText
-        android:id="@+id/edit_password"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:background="@drawable/shape_blue_outlined_rectangle"
-        android:hint="请输入您的密码"
-        android:padding="10dp"
-        android:password="true"
-        android:textSize="14sp" />
-
     <TextView
+        android:id="@+id/login_auth_remind"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
-        android:background="@drawable/shape_gray_round_rectangle"
+        android:layout_marginTop="15dp"
         android:drawablePadding="5dp"
         android:gravity="center"
         android:padding="8dp"
-        android:text="登录"
-        android:textColor="@color/white"
+        android:text="请先授权一个账户"
+        android:textColor="@color/gray_dark"
         android:textSize="14sp"
         android:textStyle="bold" />
+
+    <Spinner
+        android:id="@+id/login_spinner"
+        android:layout_width="320dip"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="100dp"
+        android:padding="10dp"
+        android:background="@drawable/shape_blue_outlined_rectangle"
+        android:spinnerMode="dropdown" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="40dp"
+        android:orientation="horizontal" >
+
+        <Button
+            android:id="@+id/login_submit"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/shape_gray_round_rectangle"
+            android:gravity="center"
+            android:padding="8dp"
+            android:text="登录"
+            android:textColor="@color/white"
+            android:textSize="14sp" >
+        </Button>
+
+        <Button
+            android:id="@+id/login_authorize"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_weight="1"
+            android:background="@drawable/shape_gray_round_rectangle"
+            android:gravity="center"
+            android:padding="8dp"
+            android:text="授权"
+            android:textColor="@color/white"
+            android:textSize="14sp" >
+        </Button>
+    </LinearLayout>
 
 </LinearLayout>
