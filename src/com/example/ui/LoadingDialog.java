@@ -10,26 +10,26 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
-public class LoadingDialog {
+public class LoadingDialog extends Dialog {
 
-	public static Dialog createLoadingDialog(Context context) {
+	private ImageView mSpaceshipImage;
+	private Animation mLoadingAnim;
 
+	public LoadingDialog(Context context) {
+		super(context, R.style.loading_dialog);
 		LayoutInflater inflater = LayoutInflater.from(context);
 		View v = inflater.inflate(R.layout.dialog_loading, null);// 得到加载view
 		LinearLayout layout = (LinearLayout) v.findViewById(R.id.dialog_view);// 加载布局
-		ImageView spaceshipImage = (ImageView) v.findViewById(R.id.img);
-		TextView tipTextView = (TextView) v.findViewById(R.id.tipTextView);// 提示文字
-		// 加载动画
-		Animation hyperspaceJumpAnimation = AnimationUtils.loadAnimation(
-				context, R.anim.anim_rotate);
-		// 使用ImageView显示动画
-		spaceshipImage.startAnimation(hyperspaceJumpAnimation);
-		Dialog loadingDialog = new Dialog(context, R.style.loading_dialog);// 创建自定义样式dialog
+		mSpaceshipImage = (ImageView) v.findViewById(R.id.img);
+		mLoadingAnim = AnimationUtils
+				.loadAnimation(context, R.anim.anim_rotate);
+		setContentView(layout);// 设置布局
+	}
 
-		loadingDialog.setCancelable(false);// 不可以用“返回键”取消
-		loadingDialog.setContentView(layout);// 设置布局
-		return loadingDialog;
+	@Override
+	public void show() {
+		mSpaceshipImage.startAnimation(mLoadingAnim);
+		super.show();
 	}
 }

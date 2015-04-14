@@ -91,7 +91,7 @@ public class MainPage extends Activity implements OnClickListener,
 		if (userName != null)
 			mTopUserName.setText(userName);
 		mSwitchMenuButton.setOnClickListener(this);
-		mLoadingDialog = LoadingDialog.createLoadingDialog(this);
+		mLoadingDialog = new LoadingDialog(this);
 		mLoadingDialog.show();
 		handler = new Handler();
 		initListView();

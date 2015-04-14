@@ -42,7 +42,7 @@ public class WeiBoListAdapter extends BaseAdapter {
 		mOriginalPicDialog = new AlertDialog.Builder(mContext).create();
 		mOriginalPicView = LayoutInflater.from(mContext).inflate(
 				R.layout.view_weibo_original_pic, null);
-		mLoadingDialog = LoadingDialog.createLoadingDialog(mContext);
+		mLoadingDialog = new LoadingDialog(mContext);
 	}
 
 	@Override
