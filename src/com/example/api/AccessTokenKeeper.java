@@ -7,7 +7,6 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 /**
  * 该类用于保存Oauth2AccessToken到sharepreference，并提供读取功能
- * @author Nightwish
  *
  */
 public class AccessTokenKeeper {

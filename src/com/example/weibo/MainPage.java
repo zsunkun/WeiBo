@@ -111,6 +111,7 @@ public class MainPage extends Activity implements OnClickListener,
 
 	}
 
+	// SwipeRefreshLayout
 	public void onRefresh() {
 		new AsyncTask<Void, Void, Void>() {
 			protected Void doInBackground(Void... params) {

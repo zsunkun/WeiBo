@@ -27,7 +27,7 @@ import android.widget.Toast;
 
 public class WeiBoListAdapter extends BaseAdapter {
 
-	private ViewHolder holder;
+	private ViewHolder mViewHolder;
 	private Context mContext;
 	private JSONArray mJsonArray;
 	private String textImage;
@@ -69,122 +69,76 @@ public class WeiBoListAdapter extends BaseAdapter {
 
 	@Override
 	public View getView(final int position, View convertView, ViewGroup parent) {
-		holder = null;
-
+		mViewHolder = null;
 		if (convertView == null) {
 			convertView = LayoutInflater.from(mContext).inflate(
 					R.layout.weibo_list_item_content, null);
 
-			holder = new ViewHolder();
-			holder.image_head = (ImageView) convertView
+			mViewHolder = new ViewHolder();
+			mViewHolder.image_head = (ImageView) convertView
 					.findViewById(R.id.weibo_item_headimage);
 
-			holder.tv_name = (TextView) convertView
+			mViewHolder.tv_name = (TextView) convertView
 					.findViewById(R.id.weibo_item_name);
-			holder.tv_text = (TextView) convertView
+			mViewHolder.tv_text = (TextView) convertView
 					.findViewById(R.id.weibo_item_text);
 
-			holder.image_textImage = (ImageView) convertView
+			mViewHolder.image_textImage = (ImageView) convertView
 					.findViewById(R.id.weibo_item_textImage);
 
-			holder.tv_retweeted_status_texts = (TextView) convertView
+			mViewHolder.tv_retweeted_status_texts = (TextView) convertView
 					.findViewById(R.id.weibo_item_retweeted_status_texts);
 
-			holder.tv_time = (TextView) convertView
+			mViewHolder.tv_time = (TextView) convertView
 					.findViewById(R.id.weibo_item_time);
-			holder.tv_repost = (TextView) convertView
+			mViewHolder.tv_repost = (TextView) convertView
 					.findViewById(R.id.weibo_item_repost);
-			holder.tv_comment = (TextView) convertView
+			mViewHolder.tv_comment = (TextView) convertView
 					.findViewById(R.id.weibo_item_comment);
 
-			holder.image_original_pic = (ImageView) mOriginalPicView
+			mViewHolder.image_original_pic = (ImageView) mOriginalPicView
 					.findViewById(R.id.iv_original_pic);
 
-			convertView.setTag(holder);
+			convertView.setTag(mViewHolder);
 
 		} else {
-			holder = (ViewHolder) convertView.getTag(); //
-			ViewHolder.resetViewHolder(holder);
+			mViewHolder = (ViewHolder) convertView.getTag(); //
+			ViewHolder.resetViewHolder(mViewHolder);
 		}
 
 		try {
-			holder.tv_time.setText(Tools
-					.formatDate(((JSONObject) getItem(position))
-							.getString("created_at")));
-			holder.tv_name.setText(new JSONObject(
-					((JSONObject) getItem(position)).getString("user"))
-					.getString("name"));
-			holder.tv_text.setText(((JSONObject) getItem(position))
-					.getString("text"));
-			holder.tv_repost.setText(String
-					.valueOf(((JSONObject) getItem(position))
-							.getInt("reposts_count")));
-			holder.tv_comment.setText(String
-					.valueOf(((JSONObject) getItem(position))
-							.getInt("comments_count")));
+			final JSONObject itemJson = getItem(position);
+			mViewHolder.tv_time.setText(Tools.formatDate(itemJson
+					.getString("created_at")));
+			mViewHolder.tv_name.setText(new JSONObject(itemJson
+					.getString("user")).getString("name"));
+			mViewHolder.tv_text.setText(itemJson.getString("text"));
+			mViewHolder.tv_repost.setText(String.valueOf(itemJson
+					.getInt("reposts_count")));
+			mViewHolder.tv_comment.setText(String.valueOf(itemJson
+					.getInt("comments_count")));
 
 			// 点击小图片显示原始大小图片
-			holder.image_textImage.setOnClickListener(new OnClickListener() {
-
-				@Override
-				public void onClick(View v) {
-					if (((JSONObject) getItem(position)).has("original_pic")) {
-
-						try {
-							String iv_original_pic_url = ((JSONObject) getItem(position))
-									.getString("original_pic");
-							holder.image_original_pic
-									.setTag(iv_original_pic_url);
-
-							Bitmap xxxx = AsyncImageLoader.loadBitmap(2,
-									(((JSONObject) getItem(position))
-											.getString("original_pic")),
-									holder.image_original_pic, position,
-									new ImageCallback() {
-										@Override
-										public void imageSet(Bitmap bitmap,
-												ImageView iv) {
-											iv.setImageBitmap(bitmap);
-											holder.image_original_pic
-													.setImageBitmap(bitmap);
-											mOriginalPicDialog.show();
-											mOriginalPicDialog
-													.setContentView(mOriginalPicView);
-										}
-									});
-
-						} catch (JSONException e) {
-							// block
-							e.printStackTrace();
-							Toast.makeText(mContext, "未获取到原始图片，请稍后再试",
-									Toast.LENGTH_LONG).show();
+			mViewHolder.image_textImage
+					.setOnClickListener(new OnClickListener() {
+						@Override
+						public void onClick(View v) {
+							ImageOnClick(itemJson, position);
 						}
-
-					} else {
-
-						holder.image_original_pic.setImageBitmap(null);
-						Toast.makeText(mContext, "没有大图", Toast.LENGTH_LONG)
-								.show();
-					}
-
-				}
-			});
+					});
 
 			// 微博原文
-			if (((JSONObject) getItem(position)).has("retweeted_status")) {
+			if (itemJson.has("retweeted_status")) {
 				/* holder.tv_retweeted_status_texts */
-				holder.tv_retweeted_status_texts
-						.setText(((JSONObject) getItem(position))
-								.getJSONObject("retweeted_status")
-								.getJSONObject("user").getString("name")
-								+ ":"
-								+ ((JSONObject) getItem(position))
-										.getJSONObject("retweeted_status")
-										.getString("text"));
+				mViewHolder.tv_retweeted_status_texts.setText(itemJson
+						.getJSONObject("retweeted_status")
+						.getJSONObject("user").getString("name")
+						+ ":"
+						+ itemJson.getJSONObject("retweeted_status").getString(
+								"text"));
 				LinearLayout layout = (LinearLayout) convertView
 						.findViewById(R.id.weibo_item_ll_retweeted_status);
 				layout.setVisibility(View.VISIBLE);
-
 			} else {
 				// holder.tv_retweeted_status_texts.setVisibility(View.GONE);
 				LinearLayout layout = (LinearLayout) convertView
@@ -193,12 +147,11 @@ public class WeiBoListAdapter extends BaseAdapter {
 			}
 
 			// 头像图片
-			String image_head_url = new JSONObject(
-					((JSONObject) getItem(position)).getString("user"))
+			String image_head_url = new JSONObject(itemJson.getString("user"))
 					.getString("profile_image_url");
-			holder.image_head.setTag(image_head_url);
+			mViewHolder.image_head.setTag(image_head_url);
 			Bitmap head_image = AsyncImageLoader.loadBitmap(0, image_head_url,
-					holder.image_head, position, new ImageCallback() {
+					mViewHolder.image_head, position, new ImageCallback() {
 						@Override
 						public void imageSet(Bitmap bitmap, ImageView iv) {
 							iv.setImageBitmap(bitmap);
@@ -206,7 +159,7 @@ public class WeiBoListAdapter extends BaseAdapter {
 					});
 
 			if (head_image != null) {
-				holder.image_head.setImageBitmap(head_image);
+				mViewHolder.image_head.setImageBitmap(head_image);
 			}
 
 			// 内容中图片 如果是wifi用中等缩略图，如果是gprs用小缩略图
@@ -216,37 +169,70 @@ public class WeiBoListAdapter extends BaseAdapter {
 				textImage = "thumbnail_pic";
 			}
 
-			if (((JSONObject) getItem(position)).has(textImage)) {// thumbnail_pic
-				holder.image_textImage.setVisibility(View.VISIBLE);
-				String image_textImage_url = ((JSONObject) getItem(position))
-						.getString(textImage);
-				holder.image_textImage.setTag(image_textImage_url);
-				Bitmap image_text = AsyncImageLoader
-						.loadBitmap(1, (((JSONObject) getItem(position))
-								.getString(textImage)), holder.image_textImage,
-								position, new ImageCallback() {
-									@Override
-									public void imageSet(Bitmap drawable,
-											ImageView iv) {
-										iv.setImageBitmap(drawable);
-									}
-								});
+			if (itemJson.has(textImage)) {// thumbnail_pic
+				mViewHolder.image_textImage.setVisibility(View.VISIBLE);
+				String image_textImage_url = itemJson.getString(textImage);
+				mViewHolder.image_textImage.setTag(image_textImage_url);
+				Bitmap image_text = AsyncImageLoader.loadBitmap(1,
+						(itemJson.getString(textImage)),
+						mViewHolder.image_textImage, position,
+						new ImageCallback() {
+							@Override
+							public void imageSet(Bitmap drawable, ImageView iv) {
+								iv.setImageBitmap(drawable);
+							}
+						});
 
 				if (image_text != null) {
-					holder.image_textImage.setImageBitmap(image_text);
-					holder.image_textImage.setVisibility(View.VISIBLE);
+					mViewHolder.image_textImage.setImageBitmap(image_text);
+					mViewHolder.image_textImage.setVisibility(View.VISIBLE);
 				}
-
 			} else {
-				holder.image_textImage.setVisibility(View.GONE);
+				mViewHolder.image_textImage.setVisibility(View.GONE);
 			}
 		} catch (Exception e) {
 			Log.i("Exception", "Try Exception:" + e.getMessage());
 		}
-
-		Log.i("position:", "Position:" + String.valueOf(position));
-
 		return convertView;
+	}
+
+	private void ImageOnClick(JSONObject itemJson, int position) {
+
+		if (itemJson.has("original_pic")) {
+			try {
+				String iv_original_pic_url = itemJson.getString("original_pic");
+				mViewHolder.image_original_pic.setTag(iv_original_pic_url);
+				Bitmap xxxx = AsyncImageLoader.loadBitmap(2,
+						(itemJson.getString("original_pic")),
+						mViewHolder.image_original_pic, position,
+						new ImageCallback() {
+							@Override
+							public void imageSet(Bitmap bitmap, ImageView iv) {
+								mViewHolder.image_original_pic
+										.setImageBitmap(bitmap);
+								mOriginalPicDialog.show();
+								mOriginalPicDialog
+										.setContentView(mOriginalPicView);
+							}
+						});
+				if (xxxx != null) {
+					mViewHolder.image_original_pic.setImageBitmap(xxxx);
+					mOriginalPicDialog.show();
+					mOriginalPicDialog.setContentView(mOriginalPicView);
+				}
+
+			} catch (JSONException e) {
+				// block
+				e.printStackTrace();
+				Toast.makeText(mContext, "未获取到原始图片，请稍后再试", Toast.LENGTH_LONG)
+						.show();
+			}
+
+		} else {
+			mViewHolder.image_original_pic.setImageBitmap(null);
+			Toast.makeText(mContext, "没有大图", Toast.LENGTH_LONG).show();
+		}
+
 	}
 
 	static class ViewHolder {

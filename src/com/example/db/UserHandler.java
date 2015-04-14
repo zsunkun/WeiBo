@@ -42,7 +42,6 @@ public class UserHandler {
 
 	public long insertUser(User user) {
 		db = dbHelper.getReadableDatabase();
-		Log.i("usexx", "插入数据前………………");
 		Cursor cursor = db.query(DBInfo.Table.USER_TABLE, columns, "user_id ="
 				+ user.getUser_id(), null, null, null, null, null);
 		if (cursor == null || cursor.getCount() == 0) {
@@ -72,7 +71,6 @@ public class UserHandler {
 	}
 
 	private ContentValues prepareContentValues(User user) {
-		Log.i("usexx", "插入数据……………………");
 		ContentValues cv = new ContentValues();
 		cv.put(DBInfo.Table.USER_NAME, user.getUser_name());
 		cv.put(DBInfo.Table.USER_ID, user.getUser_id());
@@ -116,7 +114,6 @@ public class UserHandler {
 			// cursor.moveToNext();
 			getUserFromDB(user, cursor);
 		}
-
 		cursor.close();
 		db.close();
 		return user;

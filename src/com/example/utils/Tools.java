@@ -34,10 +34,6 @@ public class Tools {
 			URLConnection urlc = new URL(url).openConnection();
 			URLConnection urlc2 = new URL(url).openConnection();
 			if (flag == 0) {
-				/*
-				 * return Drawable .createFromStream(urlc.getInputStream(),
-				 * "image");
-				 */
 				return Tools.decodeSampledBitmapFromStream(
 						urlc.getInputStream(), urlc2.getInputStream(), 50, 50);
 			} else if (flag == 1) {
@@ -48,7 +44,7 @@ public class Tools {
 			} else if (flag == 2) {
 				return Tools
 						.decodeSampledBitmapFromStream(urlc.getInputStream(),
-								urlc2.getInputStream(), 300, 300);
+								urlc2.getInputStream(), 500, 500);
 			}
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
@@ -68,9 +64,6 @@ public class Tools {
 		options.inSampleSize = calculateInSampleSize(options, reqWidth,
 				reqHeight);
 		options.inJustDecodeBounds = false;
-		Log.i("Bitmap", "options.inSampleSize: " + options.inSampleSize
-				+ "\noptions.outWidth:" + options.outWidth
-				+ " options.outHeight:" + options.outHeight);
 		return BitmapFactory.decodeStream(is2, null, options);
 
 	}
@@ -82,18 +75,11 @@ public class Tools {
 		final int width = options.outWidth;
 		int inSampleSize = 1;
 
-		Log.i("Bitmap", "reqWidth" + reqWidth + "reqHeight" + reqHeight);
-
 		if (height > reqHeight || width > reqWidth) {
 			final int heightRatio = Math.round((float) height
 					/ (float) reqHeight);
 			final int widthRatio = Math.round((float) width / (float) reqWidth);
-
-			Log.i("Bitmap", "heightRatio" + heightRatio + "widthRatio"
-					+ widthRatio);
-
 			inSampleSize = heightRatio <= widthRatio ? heightRatio : widthRatio;
-			Log.i("Bitmap", "inSampleSize:" + inSampleSize);
 		}
 		return inSampleSize;
 	}

@@ -41,14 +41,10 @@ public class AsyncImageLoader {
 		// 判断是否已经下载过，如果下载过，直接获得并返回
 		if (imageCache.containsKey(url)) {
 			SoftReference<Bitmap> soft = imageCache.get(url);
-			Log.i("ImageCache000", url.toString() + "\nPosition:" + position);
 			Bitmap bitmap = soft.get();
 			// Drawable dra = imageCache.get(url);
 			if (bitmap != null) {
 				return bitmap;
-			} else {
-				Log.i("ImageCache111", url.toString() + "\nPosition:"
-						+ position);
 			}
 		}
 
@@ -56,13 +52,10 @@ public class AsyncImageLoader {
 			@Override
 			public synchronized void handleMessage(Message msg) {
 				// 图片资源设置操作
-				if (imageView != null && !url.equals("")
+				if (imageView != null && !"".equals(url)
 						&& imageView.getTag().toString().equals(url)) {
 					callback.imageSet((Bitmap) msg.obj, imageView);
-					Log.i("!!", " handleMessage" + url + "position : "
-							+ position);
 				}
-
 			}
 		};
 		// 下载操作
@@ -71,16 +64,8 @@ public class AsyncImageLoader {
 				Bitmap bitmap = Tools.getBitmapFromUrl(flag, url);
 				// 设置缓存，避免重复下载相同的图片资源
 				imageCache.put(url, new SoftReference<Bitmap>(bitmap));
-				/*
-				 * synchronized (handler) {
-				 * 
-				 * }
-				 */
 				Message msg = handler.obtainMessage(0, bitmap);
 				handler.sendMessage(msg);
-
-				Log.i("ImageCache222", url.toString() + "\nPosition:"
-						+ position);
 			}
 		}.start();
 		return null;
@@ -88,9 +73,6 @@ public class AsyncImageLoader {
 
 	/**
 	 * 回调接口
-	 * 
-	 * @author 
-	 * 
 	 */
 	public interface ImageCallback {
 		/**
