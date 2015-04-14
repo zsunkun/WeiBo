@@ -182,7 +182,7 @@ public class MainPage extends Activity implements OnClickListener,
 					@Override
 					public void run() {
 						mAdapter = new WeiBoListAdapter(MainPage.this,
-								weibo_array);
+								weibo_array, mStatuses);
 						mListView.setAdapter(mAdapter);
 						if (mLoadingDialog.isShowing())
 							mLoadingDialog.dismiss();

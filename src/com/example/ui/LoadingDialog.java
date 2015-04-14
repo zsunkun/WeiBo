@@ -17,7 +17,7 @@ public class LoadingDialog extends Dialog {
 	private Animation mLoadingAnim;
 
 	public LoadingDialog(Context context) {
-		super(context, R.style.loading_dialog);
+		super(context, R.style.Mydialog);
 		LayoutInflater inflater = LayoutInflater.from(context);
 		View v = inflater.inflate(R.layout.dialog_loading, null);// 得到加载view
 		LinearLayout layout = (LinearLayout) v.findViewById(R.id.dialog_view);// 加载布局

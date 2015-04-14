@@ -1,20 +1,29 @@
 package com.example.adapter;
 
+import java.io.IOException;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.example.ui.CommentDialog;
 import com.example.ui.LoadingDialog;
 import com.example.utils.AsyncImageLoader;
 import com.example.utils.AsyncImageLoader.ImageCallback;
 import com.example.utils.NetworkUtils;
 import com.example.utils.Tools;
 import com.example.weibo.R;
+import com.weibo.sdk.android.WeiboException;
+import com.weibo.sdk.android.api.StatusesAPI;
+import com.weibo.sdk.android.api.WeiboAPI.COMMENTS_TYPE;
+import com.weibo.sdk.android.net.RequestListener;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,16 +38,19 @@ import android.widget.Toast;
 public class WeiBoListAdapter extends BaseAdapter {
 
 	private ViewHolder mViewHolder;
-	private Context mContext;
+	private Activity mContext;
 	private JSONArray mJsonArray;
 	private String textImage;
 	private Dialog mOriginalPicDialog;
 	private View mOriginalPicView;
 	private Dialog mLoadingDialog;
+	private StatusesAPI mStatuses;
 
-	public WeiBoListAdapter(Context context, JSONArray jsonArray) {
+	public WeiBoListAdapter(Activity context, JSONArray jsonArray,
+			StatusesAPI statuses) {
 		mContext = context;
 		mJsonArray = jsonArray;
+		mStatuses = statuses;
 		mOriginalPicDialog = new AlertDialog.Builder(mContext).create();
 		mOriginalPicView = LayoutInflater.from(mContext).inflate(
 				R.layout.view_weibo_original_pic, null);
@@ -132,6 +144,29 @@ public class WeiBoListAdapter extends BaseAdapter {
 						}
 					});
 
+			// 转发微博
+			mViewHolder.tv_repost.setOnClickListener(new OnClickListener() {
+
+				@Override
+				public void onClick(View v) {
+					repostWeibo(position);
+					if (!mLoadingDialog.isShowing())
+						mLoadingDialog.show();
+				}
+			});
+			// 评论微博
+			mViewHolder.tv_comment.setOnClickListener(new OnClickListener() {
+
+				@Override
+				public void onClick(View v) {
+					// 得到要转发的微博ID
+					try {
+						long weiBoID = itemJson.getLong("mid");
+						new CommentDialog(mContext, weiBoID).show();
+					} catch (JSONException e) {
+					}
+				}
+			});
 			// 微博原文
 			if (itemJson.has("retweeted_status")) {
 				/* holder.tv_retweeted_status_texts */
@@ -240,6 +275,44 @@ public class WeiBoListAdapter extends BaseAdapter {
 			Toast.makeText(mContext, "没有大图", Toast.LENGTH_LONG).show();
 		}
 
+	}
+
+	private void repostWeibo(int position) {
+		try {
+			JSONObject repostWeibo = (JSONObject) mJsonArray.get(position);
+			// 得到要转发的微博ID
+			long repost_id = repostWeibo.getLong("mid");
+			String text = repostWeibo.getString("text");
+			mStatuses.repost(repost_id, null, COMMENTS_TYPE.NONE,
+					new RequestListener() {
+
+						@Override
+						public void onIOException(IOException arg0) {
+							mLoadingDialog.dismiss();
+							Toast.makeText(mContext, "转发失败~",
+									Toast.LENGTH_SHORT).show();
+						}
+
+						@Override
+						public void onError(WeiboException arg0) {
+							mLoadingDialog.dismiss();
+							Toast.makeText(mContext, "转发失败~",
+									Toast.LENGTH_SHORT).show();
+						}
+
+						@Override
+						public void onComplete(String arg0) {
+							mLoadingDialog.dismiss();
+							Looper.prepare();
+							Toast.makeText(mContext, "转发成功~",
+									Toast.LENGTH_SHORT).show();
+							Looper.loop();
+						}
+					});
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	static class ViewHolder {
