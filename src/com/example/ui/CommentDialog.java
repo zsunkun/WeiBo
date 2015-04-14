@@ -8,6 +8,7 @@ import org.json.JSONObject;
 
 import com.example.adapter.CommentsAdapter;
 import com.example.api.AccessTokenKeeper;
+import com.example.utils.StringUtils;
 import com.example.weibo.LoginActivity.UserCurrent;
 import com.example.weibo.R;
 import com.weibo.sdk.android.Oauth2AccessToken;
@@ -18,15 +19,16 @@ import com.weibo.sdk.android.net.RequestListener;
 
 import android.app.Activity;
 import android.app.Dialog;
-import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.Toast;
 
-public class CommentDialog extends Dialog implements android.view.View.OnClickListener {
+public class CommentDialog extends Dialog implements
+		android.view.View.OnClickListener {
 
 	class MyRequestListener implements RequestListener {
 
@@ -108,21 +110,25 @@ public class CommentDialog extends Dialog implements android.view.View.OnClickLi
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.comment_send:
-//			sendComment();
+			sendComment();
 			break;
 		}
 	}
 
-//	private void sendComment() {
-//		if
-//		new AsyncTask<Void, Void, Void>() {
-//
-//			@Override
-//			protected Void doInBackground(Void... params) {
-//				mCommentsAPI.create(weiboContentText.getText().toString(),
-//						repost_id, false, new Req());
-//				return null;
-//			}
-//		};
-//	}
+	private void sendComment() {
+		final String content = mEditText.getText().toString();
+		if (StringUtils.isEmpty(content)) {
+			Toast.makeText(mContext, "«Î ‰»Îƒ⁄»›", Toast.LENGTH_SHORT).show();
+			return;
+		}
+		new AsyncTask<Void, Void, Void>() {
+
+			@Override
+			protected Void doInBackground(Void... params) {
+				mCommentsAPI.create(content, mWeiboID, false,
+						new MyRequestListener(false));
+				return null;
+			}
+		}.execute();
+	}
 }
