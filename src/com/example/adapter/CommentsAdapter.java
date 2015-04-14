@@ -43,6 +43,16 @@ public class CommentsAdapter extends BaseAdapter {
 		return position;
 	}
 
+	public void updateData(JSONArray jsonArray) {
+		mDataJsonArray = jsonArray;
+	}
+
+	public void updateForMoreData(JSONArray jsonArray) {
+		for (int i = 0; i < jsonArray.length(); i++) {
+			mDataJsonArray.put(jsonArray.optJSONObject(i));
+		}
+	}
+
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		mViewHolder = null;

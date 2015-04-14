@@ -23,7 +23,10 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -51,8 +54,10 @@ public class CommentDialog extends Dialog implements
 									jsonArray);
 							mCommentList.setAdapter(mCommentsAdapter);
 						} else {
+							mCommentsAdapter.updateData(jsonArray);
 							mCommentsAdapter.notifyDataSetChanged();
 						}
+						dismissLoading();
 					}
 				});
 			} catch (JSONException e) {
@@ -77,9 +82,11 @@ public class CommentDialog extends Dialog implements
 	private CommentsAdapter mCommentsAdapter;
 	private CommentsAPI mCommentsAPI;
 	private Activity mContext;
+	private ImageView mLoadingImage;
 	private long mWeiboID;
 
 	private final int MAX_COMMENT_COUNT = 20;
+	private Animation mLoadingAnim;
 
 	public CommentDialog(Activity context, long id) {
 		super(context, R.style.Mydialog);
@@ -93,8 +100,12 @@ public class CommentDialog extends Dialog implements
 		setContentView(R.layout.dialog_comment);
 		mEditText = (LineEditText) findViewById(R.id.edit_comment);
 		mSentButton = (ImageButton) findViewById(R.id.comment_send);
+		mLoadingImage = (ImageView) findViewById(R.id.img_loading);
+		mLoadingAnim = AnimationUtils.loadAnimation(mContext,
+				R.anim.anim_rotate);
 		mSentButton.setOnClickListener(this);
 		initListView();
+		showLoading();
 	}
 
 	private void initListView() {
@@ -121,6 +132,7 @@ public class CommentDialog extends Dialog implements
 			Toast.makeText(mContext, "请输入内容", Toast.LENGTH_SHORT).show();
 			return;
 		}
+		mEditText.setText("");
 		new AsyncTask<Void, Void, Void>() {
 
 			@Override
@@ -129,6 +141,21 @@ public class CommentDialog extends Dialog implements
 						new MyRequestListener(false));
 				return null;
 			}
+
+			protected void onPostExecute(Void result) {
+				Toast.makeText(mContext, "评论成功", Toast.LENGTH_SHORT);
+			};
 		}.execute();
+	}
+
+	private void showLoading() {
+		mLoadingImage.setVisibility(View.VISIBLE);
+		mLoadingImage.startAnimation(mLoadingAnim);
+		mCommentList.setVisibility(View.GONE);
+	}
+
+	private void dismissLoading() {
+		mCommentList.setVisibility(View.VISIBLE);
+		mLoadingImage.setVisibility(View.GONE);
 	}
 }
