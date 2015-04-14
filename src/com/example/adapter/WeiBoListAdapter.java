@@ -4,6 +4,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.example.ui.LoadingDialog;
 import com.example.utils.AsyncImageLoader;
 import com.example.utils.AsyncImageLoader.ImageCallback;
 import com.example.utils.NetworkUtils;
@@ -33,6 +34,7 @@ public class WeiBoListAdapter extends BaseAdapter {
 	private String textImage;
 	private Dialog mOriginalPicDialog;
 	private View mOriginalPicView;
+	private Dialog mLoadingDialog;
 
 	public WeiBoListAdapter(Context context, JSONArray jsonArray) {
 		mContext = context;
@@ -40,6 +42,7 @@ public class WeiBoListAdapter extends BaseAdapter {
 		mOriginalPicDialog = new AlertDialog.Builder(mContext).create();
 		mOriginalPicView = LayoutInflater.from(mContext).inflate(
 				R.layout.view_weibo_original_pic, null);
+		mLoadingDialog = LoadingDialog.createLoadingDialog(mContext);
 	}
 
 	@Override
@@ -124,6 +127,8 @@ public class WeiBoListAdapter extends BaseAdapter {
 						@Override
 						public void onClick(View v) {
 							ImageOnClick(itemJson, position);
+							if (!mLoadingDialog.isShowing())
+								mLoadingDialog.show();
 						}
 					});
 
@@ -210,6 +215,7 @@ public class WeiBoListAdapter extends BaseAdapter {
 							public void imageSet(Bitmap bitmap, ImageView iv) {
 								mViewHolder.image_original_pic
 										.setImageBitmap(bitmap);
+								mLoadingDialog.dismiss();
 								mOriginalPicDialog.show();
 								mOriginalPicDialog
 										.setContentView(mOriginalPicView);
@@ -217,6 +223,7 @@ public class WeiBoListAdapter extends BaseAdapter {
 						});
 				if (xxxx != null) {
 					mViewHolder.image_original_pic.setImageBitmap(xxxx);
+					mLoadingDialog.dismiss();
 					mOriginalPicDialog.show();
 					mOriginalPicDialog.setContentView(mOriginalPicView);
 				}

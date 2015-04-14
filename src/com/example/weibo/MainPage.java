@@ -8,6 +8,7 @@ import org.json.JSONObject;
 
 import com.example.adapter.WeiBoListAdapter;
 import com.example.api.AccessTokenKeeper;
+import com.example.ui.LoadingDialog;
 import com.example.ui.SlidingMenu;
 import com.example.weibo.LoginActivity.UserCurrent;
 import com.weibo.sdk.android.Oauth2AccessToken;
@@ -17,6 +18,7 @@ import com.weibo.sdk.android.api.WeiboAPI;
 import com.weibo.sdk.android.net.RequestListener;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -69,6 +71,7 @@ public class MainPage extends Activity implements OnClickListener,
 
 	private SwipeRefreshLayout mSwipeLayout;
 	private ListView mListView;
+	private Dialog mLoadingDialog;
 	private WeiBoListAdapter mAdapter;
 	private JSONArray weibo_array;
 	private Handler handler;
@@ -88,6 +91,8 @@ public class MainPage extends Activity implements OnClickListener,
 		if (userName != null)
 			mTopUserName.setText(userName);
 		mSwitchMenuButton.setOnClickListener(this);
+		mLoadingDialog = LoadingDialog.createLoadingDialog(this);
+		mLoadingDialog.show();
 		handler = new Handler();
 		initListView();
 	}
@@ -128,7 +133,6 @@ public class MainPage extends Activity implements OnClickListener,
 
 			@Override
 			protected void onPostExecute(Void result) {
-
 				mAdapter.notifyDataSetChanged();
 				mSwipeLayout.setRefreshing(false);
 			}
@@ -180,6 +184,8 @@ public class MainPage extends Activity implements OnClickListener,
 						mAdapter = new WeiBoListAdapter(MainPage.this,
 								weibo_array);
 						mListView.setAdapter(mAdapter);
+						if (mLoadingDialog.isShowing())
+							mLoadingDialog.dismiss();
 					}
 				});
 			}
