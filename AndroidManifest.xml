@@ -34,6 +34,10 @@
         <activity
             android:name=".LoginActivity"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
+        <activity
+            android:name=".WriteWeiboActivity"
+            android:theme="@style/Transparent"
+            android:windowSoftInputMode="adjustResize" />
     </application>
 
 </manifest>

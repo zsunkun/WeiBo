@@ -10,6 +10,7 @@ import com.example.adapter.WeiBoListAdapter;
 import com.example.api.AccessTokenKeeper;
 import com.example.ui.LoadingDialog;
 import com.example.ui.SlidingMenu;
+import com.example.utils.DisplayUtils;
 import com.example.weibo.LoginActivity.UserCurrent;
 import com.weibo.sdk.android.Oauth2AccessToken;
 import com.weibo.sdk.android.WeiboException;
@@ -19,17 +20,20 @@ import com.weibo.sdk.android.net.RequestListener;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.WindowManager.LayoutParams;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -46,6 +50,7 @@ public class MainPage extends Activity implements OnClickListener,
 
 		@Override
 		public void onComplete(String arg0) {
+			isRefreshing = false;
 			if (!mIsLoadMoreData)
 				refresh(arg0);
 			else
@@ -55,12 +60,10 @@ public class MainPage extends Activity implements OnClickListener,
 
 		@Override
 		public void onError(WeiboException arg0) {
-			Log.i("WeiboActivity", "onError :" + arg0.getMessage());
 		}
 
 		@Override
 		public void onIOException(IOException arg0) {
-
 		}
 
 	}
@@ -77,8 +80,11 @@ public class MainPage extends Activity implements OnClickListener,
 	private Handler handler;
 	private StatusesAPI mStatuses;
 	private TextView mTopUserName;
+	private PopupWindow mBtnAddWeiboWindow;
+	private View mBtnAddWeiboView;
 	private int mPageCount = 1;
 	private final int maxItemPerPage = 20;
+	private boolean isRefreshing = false;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -86,15 +92,53 @@ public class MainPage extends Activity implements OnClickListener,
 		setContentView(R.layout.activity_main_page);
 		mMenu = (SlidingMenu) findViewById(R.id.menu);
 		mSwitchMenuButton = (ImageButton) findViewById(R.id.button_menu_switch);
-		mTopUserName = (TextView) findViewById(R.id.text_user_name);
-		String userName = UserCurrent.currentUser.getUser_name();
-		if (userName != null)
-			mTopUserName.setText(userName);
 		mSwitchMenuButton.setOnClickListener(this);
 		mLoadingDialog = new LoadingDialog(this);
 		mLoadingDialog.show();
 		handler = new Handler();
+		initTopUserName();
+		initAddWeiboPopupWindow();
 		initListView();
+	}
+
+	private void initTopUserName() {
+		mTopUserName = (TextView) findViewById(R.id.text_user_name);
+		String userName = UserCurrent.currentUser.getUser_name();
+		if (userName != null)
+			mTopUserName.setText(userName);
+	}
+
+	private void initAddWeiboPopupWindow() {
+		mBtnAddWeiboView = getLayoutInflater().inflate(
+				R.layout.view_popup_add_weibo, null);
+		mBtnAddWeiboWindow = new PopupWindow(mBtnAddWeiboView,
+				LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+		mBtnAddWeiboView.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				startActivity(new Intent(MainPage.this,
+						WriteWeiboActivity.class));
+			}
+		});
+	}
+
+	@Override
+	public void onWindowFocusChanged(boolean hasFocus) {
+		showBtnAddWeibo();
+		super.onWindowFocusChanged(hasFocus);
+	}
+
+	private void showBtnAddWeibo() {
+		int screenHeight = DisplayUtils.getScreenHeight(this);
+		int screeWidth = DisplayUtils.getScreenWidth(this);
+		mBtnAddWeiboWindow.showAtLocation(mSwipeLayout, Gravity.NO_GRAVITY,
+				screeWidth - 200, screenHeight - 200);
+	}
+
+	private void dismissBtnAddWeibo() {
+		if (mBtnAddWeiboWindow != null && mBtnAddWeiboWindow.isShowing())
+			mBtnAddWeiboWindow.dismiss();
 	}
 
 	private void initListView() {
@@ -111,6 +155,7 @@ public class MainPage extends Activity implements OnClickListener,
 				UserCurrent.currentUser.getUser_id());
 
 		mStatuses = new StatusesAPI(o2at);
+		isRefreshing = true;// 请求前记为true
 		mStatuses.friendsTimeline(0l, 0l, maxItemPerPage, 1, false,
 				WeiboAPI.FEATURE.ALL, false, new MyRequestListener(false));
 
@@ -118,9 +163,13 @@ public class MainPage extends Activity implements OnClickListener,
 
 	// SwipeRefreshLayout
 	public void onRefresh() {
+		if (isRefreshing) {
+			return;
+		}
 		new AsyncTask<Void, Void, Void>() {
 			protected Void doInBackground(Void... params) {
 				try {
+					isRefreshing = true;
 					Thread.sleep(1000);
 					mStatuses.friendsTimeline(0l, 0l, maxItemPerPage, 1, false,
 							WeiboAPI.FEATURE.ALL, false, new MyRequestListener(
@@ -141,10 +190,13 @@ public class MainPage extends Activity implements OnClickListener,
 	}
 
 	private void loadMoreData() {
+		if (isRefreshing)
+			return;
 		mPageCount++;
 		new AsyncTask<Void, Void, Void>() {
 			protected Void doInBackground(Void... params) {
 				try {
+					isRefreshing = true;
 					Thread.sleep(1000);
 					mStatuses.friendsTimeline(0l, 0l, maxItemPerPage,
 							mPageCount, false, WeiboAPI.FEATURE.ALL, false,
@@ -242,6 +294,12 @@ public class MainPage extends Activity implements OnClickListener,
 		}
 		mLastBackClickTime = now;
 		Toast.makeText(this, "再按一次退出", Toast.LENGTH_SHORT).show();
+	}
+
+	@Override
+	protected void onDestroy() {
+		dismissBtnAddWeibo();
+		super.onDestroy();
 	}
 
 	@Override

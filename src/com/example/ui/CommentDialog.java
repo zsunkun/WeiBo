@@ -21,14 +21,15 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.AbsListView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
+import android.widget.AbsListView.OnScrollListener;
 
 public class CommentDialog extends Dialog implements
 		android.view.View.OnClickListener {
@@ -43,6 +44,7 @@ public class CommentDialog extends Dialog implements
 
 		@Override
 		public void onComplete(String arg0) {
+			isRefreshing = false;
 			final JSONArray jsonArray;
 			try {
 				JSONObject commentJson = new JSONObject(arg0);
@@ -54,7 +56,10 @@ public class CommentDialog extends Dialog implements
 									jsonArray);
 							mCommentList.setAdapter(mCommentsAdapter);
 						} else {
-							mCommentsAdapter.updateData(jsonArray);
+							if (mIsLoadMoreData)
+								mCommentsAdapter.updateForMoreData(jsonArray);
+							else
+								mCommentsAdapter.updateData(jsonArray);
 							mCommentsAdapter.notifyDataSetChanged();
 						}
 						dismissLoading();
@@ -66,12 +71,10 @@ public class CommentDialog extends Dialog implements
 
 		@Override
 		public void onError(WeiboException arg0) {
-			Log.i("WeiboActivity", "onError :" + arg0.getMessage());
 		}
 
 		@Override
 		public void onIOException(IOException arg0) {
-
 		}
 
 	}
@@ -84,6 +87,8 @@ public class CommentDialog extends Dialog implements
 	private Activity mContext;
 	private ImageView mLoadingImage;
 	private long mWeiboID;
+	private int mPageCount = 1;
+	private boolean isRefreshing = false;
 
 	private final int MAX_COMMENT_COUNT = 20;
 	private Animation mLoadingAnim;
@@ -110,11 +115,13 @@ public class CommentDialog extends Dialog implements
 
 	private void initListView() {
 		mCommentList = (ListView) findViewById(R.id.list_comment);
+		mCommentList.setOnScrollListener(new OnScrollListenerImpl());
 		Oauth2AccessToken o2at = AccessTokenKeeper.readAccessToken(mContext,
 				UserCurrent.currentUser.getUser_id());
 		mCommentsAPI = new CommentsAPI(o2at);
 		mCommentsAPI.show(mWeiboID, 0l, 0l, MAX_COMMENT_COUNT, 1,
 				WeiboAPI.AUTHOR_FILTER.ALL, new MyRequestListener(false));
+		isRefreshing = true;
 	}
 
 	@Override
@@ -137,6 +144,7 @@ public class CommentDialog extends Dialog implements
 
 			@Override
 			protected Void doInBackground(Void... params) {
+				isRefreshing = true;
 				mCommentsAPI.create(content, mWeiboID, false,
 						new MyRequestListener(false));
 				return null;
@@ -145,6 +153,40 @@ public class CommentDialog extends Dialog implements
 			protected void onPostExecute(Void result) {
 				Toast.makeText(mContext, "ÆÀÂÛ³É¹¦", Toast.LENGTH_SHORT);
 			};
+		}.execute();
+	}
+
+	private class OnScrollListenerImpl implements OnScrollListener {
+		@Override
+		public void onScroll(AbsListView listView, int firstVisibleItem,
+				int visibleItemCount, int totalItemCount) {
+		}
+
+		@Override
+		public void onScrollStateChanged(AbsListView listview, int scrollState) {
+			if (scrollState == OnScrollListener.SCROLL_STATE_IDLE) {
+				if (listview.getLastVisiblePosition() == listview.getCount() - 1) {
+					loadMoreData();
+				}
+			}
+		}
+	}
+
+	private void loadMoreData() {
+		if (isRefreshing) {
+			return;
+		}
+		mPageCount++;
+		new AsyncTask<Void, Void, Void>() {
+
+			@Override
+			protected Void doInBackground(Void... params) {
+				mCommentsAPI.show(mWeiboID, 0l, 0l, MAX_COMMENT_COUNT,
+						mPageCount, WeiboAPI.AUTHOR_FILTER.ALL,
+						new MyRequestListener(true));
+				return null;
+			}
+
 		}.execute();
 	}
 
