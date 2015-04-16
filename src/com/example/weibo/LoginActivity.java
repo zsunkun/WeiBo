@@ -61,6 +61,8 @@ public class LoginActivity extends Activity implements OnClickListener {
 		mUserData = user.findAllUsers();
 
 		if (mUserData == null || mUserData.isEmpty()) {
+			mLoginButton.setVisibility(View.GONE);
+			mUserSpinner.setVisibility(View.GONE);
 			mAuthRemind.setVisibility(View.VISIBLE);
 			startAuth();
 		} else {
@@ -90,7 +92,6 @@ public class LoginActivity extends Activity implements OnClickListener {
 	}
 
 	private void startAuth() {
-		mLoginButton.setVisibility(View.GONE);
 		mWeibo = Weibo.getInstance(Constants.APP_KEY, Constants.REDIRECT_URL);
 		mWeibo.authorize(LoginActivity.this, new AuthDialogListener());
 	}
@@ -111,13 +112,13 @@ public class LoginActivity extends Activity implements OnClickListener {
 
 				@Override
 				public void onIOException(IOException arg0) {
-					Toast.makeText(LoginActivity.this, "ÊÚÈ¨Ê§°Ü~",
+					Toast.makeText(LoginActivity.this, "ÊÚÈ¨Ê§°Ü",
 							Toast.LENGTH_SHORT).show();
 				}
 
 				@Override
 				public void onError(WeiboException arg0) {
-					Toast.makeText(LoginActivity.this, "ÊÚÈ¨Ê§°Ü~",
+					Toast.makeText(LoginActivity.this, "ÊÚÈ¨Ê§°Ü",
 							Toast.LENGTH_SHORT).show();
 				}
 
