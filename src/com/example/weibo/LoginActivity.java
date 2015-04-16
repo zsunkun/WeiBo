@@ -107,17 +107,18 @@ public class LoginActivity extends Activity implements OnClickListener {
 			accessToken.setExpiresIn(expires_in);
 			UsersAPI users = new UsersAPI(accessToken);
 
-			Log.i("OAuthActivity", "UIDSTR:" + uid);
 			users.show(Long.parseLong(uid), new RequestListener() {
 
 				@Override
 				public void onIOException(IOException arg0) {
-					Log.i("OAuthActivity", "onIOException" + arg0.getMessage());
+					Toast.makeText(LoginActivity.this, "ÊÚÈ¨Ê§°Ü~",
+							Toast.LENGTH_SHORT).show();
 				}
 
 				@Override
 				public void onError(WeiboException arg0) {
-					Log.i("OAuthActivity", "onError" + arg0.getMessage());
+					Toast.makeText(LoginActivity.this, "ÊÚÈ¨Ê§°Ü~",
+							Toast.LENGTH_SHORT).show();
 				}
 
 				@Override

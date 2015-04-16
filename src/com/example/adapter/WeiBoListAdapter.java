@@ -289,15 +289,19 @@ public class WeiBoListAdapter extends BaseAdapter {
 						@Override
 						public void onIOException(IOException arg0) {
 							mLoadingDialog.dismiss();
+							Looper.prepare();
 							Toast.makeText(mContext, "转发失败~",
 									Toast.LENGTH_SHORT).show();
+							Looper.loop();
 						}
 
 						@Override
 						public void onError(WeiboException arg0) {
 							mLoadingDialog.dismiss();
+							Looper.prepare();
 							Toast.makeText(mContext, "转发失败~",
 									Toast.LENGTH_SHORT).show();
+							Looper.loop();
 						}
 
 						@Override
