@@ -9,9 +9,9 @@ import org.json.JSONObject;
 import com.example.adapter.WeiBoListAdapter;
 import com.example.api.AccessTokenKeeper;
 import com.example.ui.LoadingDialog;
-import com.example.ui.SlidingMenu;
 import com.example.utils.DisplayUtils;
 import com.example.weibo.LoginActivity.UserCurrent;
+import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.weibo.sdk.android.Oauth2AccessToken;
 import com.weibo.sdk.android.WeiboException;
 import com.weibo.sdk.android.api.StatusesAPI;
@@ -69,7 +69,6 @@ public class MainPage extends Activity implements OnClickListener,
 	}
 
 	private long mLastBackClickTime = 0;
-	private SlidingMenu mMenu;
 	private ImageButton mSwitchMenuButton;
 
 	private SwipeRefreshLayout mSwipeLayout;
@@ -81,6 +80,7 @@ public class MainPage extends Activity implements OnClickListener,
 	private StatusesAPI mStatuses;
 	private TextView mTopUserName;
 	private PopupWindow mBtnAddWeiboWindow;
+	private SlidingMenu mSlidingMenu;
 	private View mBtnAddWeiboView;
 	private int mPageCount = 1;
 	private final int maxItemPerPage = 20;
@@ -90,7 +90,7 @@ public class MainPage extends Activity implements OnClickListener,
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main_page);
-		mMenu = (SlidingMenu) findViewById(R.id.menu);
+		initMenu();
 		mSwitchMenuButton = (ImageButton) findViewById(R.id.button_menu_switch);
 		mSwitchMenuButton.setOnClickListener(this);
 		mLoadingDialog = new LoadingDialog(this);
@@ -99,6 +99,27 @@ public class MainPage extends Activity implements OnClickListener,
 		initTopUserName();
 		initAddWeiboPopupWindow();
 		initListView();
+	}
+
+	private void initMenu() {
+		// 实例化滑动菜单对象
+		mSlidingMenu = new SlidingMenu(this);
+		// 设置为左滑菜单
+		mSlidingMenu.setMode(SlidingMenu.LEFT);
+		// 设置触摸屏幕的模式
+		mSlidingMenu.setTouchModeAbove(SlidingMenu.TOUCHMODE_FULLSCREEN);
+		// 设置滑动阴影的宽度
+		mSlidingMenu.setShadowWidthRes(R.dimen.shadow_width);
+		// 设置滑动阴影的图像资源
+		mSlidingMenu.setShadowDrawable(R.drawable.shape_slide_menu_shadow);
+		// 设置滑动菜单划出时主页面显示的剩余宽度
+		mSlidingMenu.setBehindOffsetRes(R.dimen.slidingmenu_offset);
+		// 设置渐入渐出效果的值
+		mSlidingMenu.setFadeDegree(0.35f);
+		// 附加在Activity上
+		mSlidingMenu.attachToActivity(this, SlidingMenu.SLIDING_CONTENT);
+		// 设置滑动菜单的布局
+		mSlidingMenu.setMenu(R.layout.layout_menu);
 	}
 
 	private void initTopUserName() {
@@ -306,7 +327,7 @@ public class MainPage extends Activity implements OnClickListener,
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.button_menu_switch:
-			mMenu.toggleMenu();
+			mSlidingMenu.toggle();
 			break;
 
 		}
