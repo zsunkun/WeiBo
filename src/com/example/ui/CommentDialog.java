@@ -25,8 +25,10 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.AbsListView;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
 import android.widget.AbsListView.OnScrollListener;
@@ -80,7 +82,7 @@ public class CommentDialog extends Dialog implements
 	}
 
 	private LineEditText mEditText;
-	private ImageButton mSentButton;
+	private LinearLayout mSentButton;
 	private ListView mCommentList;
 	private CommentsAdapter mCommentsAdapter;
 	private CommentsAPI mCommentsAPI;
@@ -104,7 +106,7 @@ public class CommentDialog extends Dialog implements
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.dialog_comment);
 		mEditText = (LineEditText) findViewById(R.id.edit_comment);
-		mSentButton = (ImageButton) findViewById(R.id.comment_send);
+		mSentButton = (LinearLayout) findViewById(R.id.comment_send);
 		mLoadingImage = (ImageView) findViewById(R.id.img_loading);
 		mLoadingAnim = AnimationUtils.loadAnimation(mContext,
 				R.anim.anim_rotate);

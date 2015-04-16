@@ -39,13 +39,21 @@
         android:background="@color/white"
         android:padding="5dp" >
 
-        <ImageButton
+        <LinearLayout
             android:id="@+id/comment_send"
-            android:layout_width="28dp"
-            android:layout_height="28dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_margin="3dp"
-            android:background="@drawable/ic_send" />
+            android:background="@drawable/selector_btn_send_comment"
+            android:clickable="true" >
+
+            <ImageButton
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:clickable="false"
+                android:background="@drawable/ic_send" />
+        </LinearLayout>
 
         <com.example.ui.LineEditText
             android:id="@+id/edit_comment"

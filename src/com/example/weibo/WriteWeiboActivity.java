@@ -20,6 +20,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -77,8 +78,8 @@ public class WriteWeiboActivity extends Activity implements OnClickListener,
 		}
 	}
 
-	private ImageView mBtnSubmit;
-	private ImageView mBtnSelectPhoto;
+	private LinearLayout mBtnSubmit;
+	private LinearLayout mBtnSelectPhoto;
 	private EditText mContent;
 	private TextView mTextCount;
 	private int mTextLengthCount;
@@ -87,8 +88,8 @@ public class WriteWeiboActivity extends Activity implements OnClickListener,
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_write_weibo);
-		mBtnSubmit = (ImageView) findViewById(R.id.iv_submit);
-		mBtnSelectPhoto = (ImageView) findViewById(R.id.iv_camera);
+		mBtnSubmit = (LinearLayout) findViewById(R.id.iv_submit);
+		mBtnSelectPhoto = (LinearLayout) findViewById(R.id.iv_camera);
 		mContent = (EditText) findViewById(R.id.et_comment);
 		mContent.addTextChangedListener(this);
 		mTextCount = (TextView) findViewById(R.id.tv_count);

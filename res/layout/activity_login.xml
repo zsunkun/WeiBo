@@ -29,8 +29,8 @@
         android:text="请先授权一个账户"
         android:textColor="@color/gray_dark"
         android:textSize="14sp"
-        android:visibility="gone"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:visibility="gone" />
 
     <Spinner
         android:id="@+id/login_spinner"
@@ -38,8 +38,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="100dp"
-        android:padding="10dp"
         android:background="@drawable/shape_blue_outlined_rectangle"
+        android:padding="10dp"
         android:spinnerMode="dropdown" />
 
     <LinearLayout
@@ -54,7 +54,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:background="@drawable/shape_gray_round_rectangle"
+            android:background="@drawable/selector_shape_gray_round_rectangle"
             android:gravity="center"
             android:padding="8dp"
             android:text="登录"
@@ -68,7 +68,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"
             android:layout_weight="1"
-            android:background="@drawable/shape_gray_round_rectangle"
+            android:background="@drawable/selector_shape_gray_round_rectangle"
             android:gravity="center"
             android:padding="8dp"
             android:text="授权"
