@@ -55,7 +55,6 @@ public class MainPage extends Activity implements OnClickListener,
 				refresh(arg0);
 			else
 				refreshForMoreData(arg0);
-
 		}
 
 		@Override
