@@ -19,7 +19,6 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -82,7 +81,6 @@ public class WriteWeiboActivity extends Activity implements OnClickListener,
 	private LinearLayout mBtnSelectPhoto;
 	private EditText mContent;
 	private TextView mTextCount;
-	private int mTextLengthCount;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {

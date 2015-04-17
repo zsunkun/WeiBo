@@ -21,6 +21,7 @@ import com.weibo.sdk.android.net.RequestListener;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -32,6 +33,8 @@ import android.view.WindowManager.LayoutParams;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
@@ -75,12 +78,23 @@ public class MainPage extends Activity implements OnClickListener,
 	private Dialog mLoadingDialog;
 	private WeiBoListAdapter mAdapter;
 	private JSONArray weibo_array;
-	private Handler handler;
+	private Handler mHandler;
 	private StatusesAPI mStatuses;
 	private TextView mTopUserName;
 	private PopupWindow mBtnAddWeiboWindow;
 	private SlidingMenu mSlidingMenu;
 	private View mBtnAddWeiboView;
+	private ImageView mMoreUserImage;
+	private TextView mMoreUserName;
+	private LinearLayout mItemHome;
+	private LinearLayout mItemCollection;
+	private LinearLayout mItemMessage;
+	private LinearLayout mItemAt;
+	private LinearLayout mItemComment;
+	private LinearLayout mItemAboutUs;
+	private TextView mWeibo;
+	private TextView mAttention;
+	private TextView mFans;
 	private int mPageCount = 1;
 	private final int maxItemPerPage = 20;
 	private boolean isRefreshing = false;
@@ -90,14 +104,39 @@ public class MainPage extends Activity implements OnClickListener,
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main_page);
 		initMenu();
-		mSwitchMenuButton = (ImageButton) findViewById(R.id.button_menu_switch);
-		mSwitchMenuButton.setOnClickListener(this);
+		initElements();
 		mLoadingDialog = new LoadingDialog(this);
 		mLoadingDialog.show();
-		handler = new Handler();
-		initTopUserName();
+		mHandler = new Handler();
+		initUserInfo();
 		initAddWeiboPopupWindow();
 		initListView();
+	}
+
+	private void initElements() {
+		mSwitchMenuButton = (ImageButton) findViewById(R.id.button_menu_switch);
+		mSwitchMenuButton.setOnClickListener(this);
+		mMoreUserImage = (ImageView) findViewById(R.id.image_head);
+		mMoreUserName = (TextView) findViewById(R.id.text_more_user_name);
+		mItemAboutUs = (LinearLayout) findViewById(R.id.item_about_us);
+		mItemAboutUs.setOnClickListener(this);
+		mItemAt = (LinearLayout) findViewById(R.id.item_at_me);
+		mItemAt.setOnClickListener(this);
+		mItemCollection = (LinearLayout) findViewById(R.id.item_collect);
+		mItemCollection.setOnClickListener(this);
+		mItemComment = (LinearLayout) findViewById(R.id.item_comment);
+		mItemComment.setOnClickListener(this);
+		mItemHome = (LinearLayout) findViewById(R.id.item_home);
+		mItemHome.setOnClickListener(this);
+		mItemMessage = (LinearLayout) findViewById(R.id.item_msg);
+		mItemMessage.setOnClickListener(this);
+		mTopUserName = (TextView) findViewById(R.id.text_user_name);
+		mWeibo = (TextView) findViewById(R.id.text_my_weibo);
+		mWeibo.setOnClickListener(this);
+		mAttention = (TextView) findViewById(R.id.text_my_attention);
+		mAttention.setOnClickListener(this);
+		mFans = (TextView) findViewById(R.id.text_my_fans);
+		mFans.setOnClickListener(this);
 	}
 
 	private void initMenu() {
@@ -121,11 +160,14 @@ public class MainPage extends Activity implements OnClickListener,
 		mSlidingMenu.setMenu(R.layout.layout_menu);
 	}
 
-	private void initTopUserName() {
-		mTopUserName = (TextView) findViewById(R.id.text_user_name);
+	private void initUserInfo() {
 		String userName = UserCurrent.currentUser.getUser_name();
-		if (userName != null)
+		if (userName != null) {
 			mTopUserName.setText(userName);
+			mMoreUserName.setText(userName);
+		}
+		Drawable userHead = UserCurrent.currentUser.getUser_head();
+		mMoreUserImage.setBackgroundDrawable(userHead);
 	}
 
 	private void initAddWeiboPopupWindow() {
@@ -137,8 +179,7 @@ public class MainPage extends Activity implements OnClickListener,
 
 			@Override
 			public void onClick(View v) {
-				startActivity(new Intent(MainPage.this,
-						WriteWeiboActivity.class));
+				StartActivity(WriteWeiboActivity.class);
 			}
 		});
 	}
@@ -250,7 +291,7 @@ public class MainPage extends Activity implements OnClickListener,
 					}
 				});
 			} else {
-				handler.post(new Runnable() {
+				mHandler.post(new Runnable() {
 					@Override
 					public void run() {
 						mAdapter = new WeiBoListAdapter(MainPage.this,
@@ -328,7 +369,18 @@ public class MainPage extends Activity implements OnClickListener,
 		case R.id.button_menu_switch:
 			mSlidingMenu.toggle();
 			break;
+		case R.id.item_home:
+			mSlidingMenu.toggle();
+			mListView.smoothScrollToPosition(0);
+			mSwipeLayout.setRefreshing(true);
+			onRefresh();
+			break;
 
 		}
+	}
+
+	private void StartActivity(Class<?> cls) {
+		Intent intent = new Intent(this, cls);
+		startActivity(intent);
 	}
 }

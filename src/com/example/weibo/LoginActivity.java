@@ -180,7 +180,6 @@ public class LoginActivity extends Activity implements OnClickListener {
 			Intent intent = new Intent(LoginActivity.this, MainPage.class);
 			startActivity(intent);
 			LoginActivity.this.finish();
-			Log.i("user", UserCurrent.currentUser.getUser_name());
 			break;
 		case R.id.login_authorize:
 			startAuth();
