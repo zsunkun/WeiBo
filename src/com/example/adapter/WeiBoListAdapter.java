@@ -7,7 +7,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.example.ui.CommentDialog;
-import com.example.ui.LoadingDialog;
 import com.example.utils.AsyncImageLoader;
 import com.example.utils.AsyncImageLoader.ImageCallback;
 import com.example.utils.NetworkUtils;
@@ -19,9 +18,6 @@ import com.weibo.sdk.android.api.WeiboAPI.COMMENTS_TYPE;
 import com.weibo.sdk.android.net.RequestListener;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Looper;
 import android.util.Log;
@@ -29,57 +25,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class WeiBoListAdapter extends BaseAdapter {
+public class WeiBoListAdapter extends MyAdapter {
 
 	private ViewHolder mViewHolder;
-	private Activity mContext;
-	private JSONArray mJsonArray;
 	private String textImage;
-	private Dialog mOriginalPicDialog;
-	private View mOriginalPicView;
-	private Dialog mLoadingDialog;
-	private StatusesAPI mStatuses;
 
 	public WeiBoListAdapter(Activity context, JSONArray jsonArray,
 			StatusesAPI statuses) {
-		mContext = context;
-		mJsonArray = jsonArray;
-		mStatuses = statuses;
-		mOriginalPicDialog = new AlertDialog.Builder(mContext).create();
-		mOriginalPicView = LayoutInflater.from(mContext).inflate(
-				R.layout.view_weibo_original_pic, null);
-		mLoadingDialog = new LoadingDialog(mContext);
-	}
-
-	@Override
-	public int getCount() {
-		return mJsonArray.length();
-	}
-
-	@Override
-	public JSONObject getItem(int position) {
-		return (JSONObject) mJsonArray.opt(position);
-	}
-
-	@Override
-	public long getItemId(int position) {
-		return position;
-	}
-
-	public void updateData(JSONArray jsonArray) {
-		mJsonArray = jsonArray;
-	}
-
-	public void updateForMoreData(JSONArray jsonArray) {
-		for (int i = 0; i < jsonArray.length(); i++) {
-			mJsonArray.put(jsonArray.optJSONObject(i));
-		}
+		super(context, jsonArray, statuses);
 	}
 
 	@Override
