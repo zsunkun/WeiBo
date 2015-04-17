@@ -4,7 +4,10 @@ import org.json.JSONArray;
 
 import com.example.adapter.MyAdapter;
 import com.example.adapter.WeiBoListAdapter;
+import com.example.api.AccessTokenKeeper;
 import com.example.utils.DisplayUtils;
+import com.example.weibo.LoginActivity.UserCurrent;
+import com.weibo.sdk.android.Oauth2AccessToken;
 import com.weibo.sdk.android.api.StatusesAPI;
 import com.weibo.sdk.android.api.WeiboAPI;
 
@@ -25,9 +28,14 @@ public class MainPage extends BaseActivity implements OnClickListener,
 	private long mLastBackClickTime = 0;
 	private PopupWindow mBtnAddWeiboWindow;
 	private View mBtnAddWeiboView;
+	private StatusesAPI mStatuses;
+	private Oauth2AccessToken o2at;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		o2at = AccessTokenKeeper.readAccessToken(this,
+				UserCurrent.currentUser.getUser_id());
+		mStatuses = new StatusesAPI(o2at);
 		super.onCreate(savedInstanceState);
 		initAddWeiboPopupWindow();
 	}
@@ -87,7 +95,7 @@ public class MainPage extends BaseActivity implements OnClickListener,
 	}
 
 	@Override
-	protected MyAdapter getAdapter(JSONArray weibo_array, StatusesAPI mStatuses) {
+	protected MyAdapter getAdapter(JSONArray weibo_array) {
 		return new WeiBoListAdapter(this, weibo_array, mStatuses);
 	}
 

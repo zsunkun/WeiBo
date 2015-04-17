@@ -7,13 +7,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.example.adapter.MyAdapter;
-import com.example.api.AccessTokenKeeper;
 import com.example.ui.LoadingDialog;
 import com.example.weibo.LoginActivity.UserCurrent;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
-import com.weibo.sdk.android.Oauth2AccessToken;
 import com.weibo.sdk.android.WeiboException;
-import com.weibo.sdk.android.api.StatusesAPI;
 import com.weibo.sdk.android.net.RequestListener;
 
 import android.app.Activity;
@@ -34,6 +31,9 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
+/*
+ * when you extends this Activity, you must get Weibo API before invoke super.OnCreate
+ */
 public abstract class BaseActivity extends Activity implements OnClickListener,
 		SwipeRefreshLayout.OnRefreshListener {
 
@@ -88,7 +88,6 @@ public abstract class BaseActivity extends Activity implements OnClickListener,
 	protected SwipeRefreshLayout mSwipeLayout;
 	protected int mPageCount = 1;
 	protected final int maxItemPerPage = 20;
-	protected StatusesAPI mStatuses;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -171,17 +170,13 @@ public abstract class BaseActivity extends Activity implements OnClickListener,
 				android.R.color.holo_green_light,
 				android.R.color.holo_orange_light,
 				android.R.color.holo_red_light);
-		Oauth2AccessToken o2at = AccessTokenKeeper.readAccessToken(this,
-				UserCurrent.currentUser.getUser_id());
-		mStatuses = new StatusesAPI(o2at);
 		isRefreshing = true;// 请求前记为true
 		getData(false);
 	}
 
 	abstract protected void getData(boolean isFormoreData);
 
-	abstract protected MyAdapter getAdapter(JSONArray weibo_array,
-			StatusesAPI mStatuses);
+	abstract protected MyAdapter getAdapter(JSONArray weibo_array);
 
 	abstract protected Activity getActivity();
 
@@ -253,7 +248,7 @@ public abstract class BaseActivity extends Activity implements OnClickListener,
 				mHandler.post(new Runnable() {
 					@Override
 					public void run() {
-						mAdapter = getAdapter(weibo_array, mStatuses);
+						mAdapter = getAdapter(weibo_array);
 						mListView.setAdapter(mAdapter);
 						if (mLoadingDialog.isShowing())
 							mLoadingDialog.dismiss();
@@ -311,17 +306,22 @@ public abstract class BaseActivity extends Activity implements OnClickListener,
 			mSlidingMenu.toggle();
 			break;
 		case R.id.item_home:
+//			while(!getActivity().getClass().equals(MainPage.class)){
+//				getActivity().finish();
+//			}
 			mSlidingMenu.toggle();
 			mListView.smoothScrollToPosition(0);
 			mSwipeLayout.setRefreshing(true);
 			onRefresh();
 			break;
-
+		case R.id.item_collect:
+			StartActivity(MyCollectionActivity.class);
 		}
 	}
 
 	private void StartActivity(Class<?> cls) {
-		Intent intent = new Intent(this, cls);
+		Intent intent = new Intent(getActivity(), cls);
 		startActivity(intent);
+		mSlidingMenu.toggle();
 	}
 }
