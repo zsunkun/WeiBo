@@ -1,6 +1,8 @@
 package com.example.weibo;
 
 import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import com.example.adapter.MyAdapter;
 import com.example.adapter.WeiBoListAdapter;
@@ -18,6 +20,24 @@ public class MyCollectionActivity extends BaseActivity {
 	private StatusesAPI mStatuses;
 	private Oauth2AccessToken o2at;
 
+	class MyCollectionAdapter extends WeiBoListAdapter {
+
+		public MyCollectionAdapter(Activity context, JSONArray jsonArray,
+				StatusesAPI statuses) {
+			super(context, jsonArray, statuses);
+		}
+
+		@Override
+		public JSONObject getItem(int position) {
+			try {
+				return ((JSONObject) mJsonArray.opt(position))
+						.getJSONObject("status");
+			} catch (JSONException e) {
+			}
+			return null;
+		}
+	}
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		o2at = AccessTokenKeeper.readAccessToken(this,
@@ -29,10 +49,10 @@ public class MyCollectionActivity extends BaseActivity {
 
 	@Override
 	protected void getData(boolean isFormoreData) {
-		if (!isFormoreData)
+		if (!isFormoreData) {
 			mFavoritesAPI.favorites(maxItemPerPage, 1, new MyRequestListener(
 					false));
-		else {
+		} else {
 			mFavoritesAPI.favorites(maxItemPerPage, mPageCount,
 					new MyRequestListener(true));
 		}
@@ -40,11 +60,16 @@ public class MyCollectionActivity extends BaseActivity {
 
 	@Override
 	protected MyAdapter getAdapter(JSONArray weibo_array) {
-		return new WeiBoListAdapter(this, weibo_array, mStatuses);
+		return new MyCollectionAdapter(this, weibo_array, mStatuses);
 	}
 
 	@Override
 	protected Activity getActivity() {
 		return this;
+	}
+
+	@Override
+	protected String getJSONName() {
+		return "favorites";
 	}
 }

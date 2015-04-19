@@ -115,4 +115,9 @@ public class MainPage extends BaseActivity implements OnClickListener,
 	protected Activity getActivity() {
 		return this;
 	}
+
+	@Override
+	protected String getJSONName() {
+		return "statuses";
+	}
 }

@@ -81,6 +81,9 @@ public class WeiBoListAdapter extends MyAdapter {
 
 		try {
 			final JSONObject itemJson = getItem(position);
+			if (itemJson == null) {
+				return null;
+			}
 			mViewHolder.tv_time.setText(Tools.formatDate(itemJson
 					.getString("created_at")));
 			mViewHolder.tv_name.setText(new JSONObject(itemJson

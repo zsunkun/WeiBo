@@ -20,6 +20,7 @@ import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -34,8 +35,8 @@ import android.widget.TextView;
 /*
  * when you extends this Activity, you must get Weibo API before invoke super.OnCreate
  */
-public abstract class BaseActivity extends Activity implements OnClickListener,
-		SwipeRefreshLayout.OnRefreshListener {
+public abstract class BaseActivity extends FragmentActivity implements
+		OnClickListener, SwipeRefreshLayout.OnRefreshListener {
 
 	class MyRequestListener implements RequestListener {
 
@@ -180,6 +181,8 @@ public abstract class BaseActivity extends Activity implements OnClickListener,
 
 	abstract protected Activity getActivity();
 
+	abstract protected String getJSONName();
+
 	// SwipeRefreshLayout
 	public void onRefresh() {
 		if (isRefreshing) {
@@ -235,7 +238,7 @@ public abstract class BaseActivity extends Activity implements OnClickListener,
 		JSONObject weibo_json;
 		try {
 			weibo_json = new JSONObject(arg0);
-			weibo_array = weibo_json.getJSONArray("statuses");
+			weibo_array = weibo_json.getJSONArray(getJSONName());
 			if (mAdapter != null) {
 				runOnUiThread(new Runnable() {
 					@Override
@@ -306,13 +309,15 @@ public abstract class BaseActivity extends Activity implements OnClickListener,
 			mSlidingMenu.toggle();
 			break;
 		case R.id.item_home:
-//			while(!getActivity().getClass().equals(MainPage.class)){
-//				getActivity().finish();
-//			}
-			mSlidingMenu.toggle();
-			mListView.smoothScrollToPosition(0);
-			mSwipeLayout.setRefreshing(true);
-			onRefresh();
+			if (!(getActivity().getComponentName().toString()
+					.contains("MainPage"))) {
+				StartActivity(MainPage.class);
+			} else {
+				mSlidingMenu.toggle();
+				mListView.smoothScrollToPosition(0);
+				mSwipeLayout.setRefreshing(true);
+				onRefresh();
+			}
 			break;
 		case R.id.item_collect:
 			StartActivity(MyCollectionActivity.class);
