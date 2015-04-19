@@ -40,6 +40,9 @@
             android:name=".MyCollectionActivity"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
         <activity
+            android:name=".MensionsMeActivity"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
+        <activity
             android:name=".WriteWeiboActivity"
             android:theme="@style/Transparent"
             android:windowSoftInputMode="adjustResize" />
