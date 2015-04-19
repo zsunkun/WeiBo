@@ -4,3 +4,5 @@ gen/*
 .project
 project.properties
 .settings/
+slidingmenu_library/bin/*
+slidingmenu_library/gen/*
