@@ -66,13 +66,11 @@ public abstract class BaseActivity extends FragmentActivity implements
 	}
 
 	private ImageButton mSwitchMenuButton;
-	private ListView mListView;
 	private Dialog mLoadingDialog;
 	private MyAdapter mAdapter;
 	private JSONArray weibo_array;
 	private Handler mHandler;
 	private TextView mTopUserName;
-	private SlidingMenu mSlidingMenu;
 	private ImageView mMoreUserImage;
 	private TextView mMoreUserName;
 	private LinearLayout mItemHome;
@@ -86,6 +84,8 @@ public abstract class BaseActivity extends FragmentActivity implements
 	private TextView mFans;
 	private boolean isRefreshing = false;
 
+	protected ListView mListView;
+	protected SlidingMenu mSlidingMenu;
 	protected SwipeRefreshLayout mSwipeLayout;
 	protected int mPageCount = 1;
 	protected final int maxItemPerPage = 20;
@@ -334,6 +334,12 @@ public abstract class BaseActivity extends FragmentActivity implements
 	private void StartActivity(Class<?> cls) {
 		Intent intent = new Intent(getActivity(), cls);
 		startActivity(intent);
-		mSlidingMenu.toggle();
+		if (mSlidingMenu.isMenuShowing())
+			mSlidingMenu.toggle();
+	}
+
+	@Override
+	public void onBackPressed() {
+		StartActivity(MainPage.class);
 	}
 }

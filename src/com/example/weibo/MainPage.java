@@ -76,7 +76,7 @@ public class MainPage extends BaseActivity implements OnClickListener,
 	public void onBackPressed() {
 		long now = System.currentTimeMillis();
 		if (now - mLastBackClickTime < 1000) {
-			super.onBackPressed();
+			finish();
 			return;
 		}
 		mLastBackClickTime = now;
