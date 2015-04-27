@@ -321,8 +321,13 @@ public abstract class BaseActivity extends FragmentActivity implements
 			break;
 		case R.id.item_collect:
 			StartActivity(MyCollectionActivity.class);
+			break;
 		case R.id.item_at_me:
 			StartActivity(MensionsMeActivity.class);
+			break;
+		case R.id.item_comment:
+			StartActivity(CommentsActivity.class);
+			break;
 		}
 	}
 
