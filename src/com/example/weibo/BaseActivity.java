@@ -1,12 +1,14 @@
 package com.example.weibo;
 
 import java.io.IOException;
+import java.text.BreakIterator;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.example.adapter.MyAdapter;
+import com.example.api.User;
 import com.example.ui.LoadingDialog;
 import com.example.weibo.LoginActivity.UserCurrent;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
@@ -159,6 +161,9 @@ public abstract class BaseActivity extends FragmentActivity implements
 		}
 		Drawable userHead = UserCurrent.currentUser.getUser_head();
 		mMoreUserImage.setBackgroundDrawable(userHead);
+		mWeibo.setText("Î¢²©" + UserCurrent.currentUser.getStatuses_count());
+		mAttention.setText("¹Ø×¢" + UserCurrent.currentUser.getFriends_count());
+		mFans.setText("·ÛË¿" + UserCurrent.currentUser.getFollowers_count());
 	}
 
 	private void initListView() {
@@ -327,6 +332,13 @@ public abstract class BaseActivity extends FragmentActivity implements
 			break;
 		case R.id.item_comment:
 			StartActivity(CommentsActivity.class);
+			break;
+		case R.id.text_my_weibo:
+			StartActivity(MyWeiboActivity.class);
+			break;
+		case R.id.text_my_attention:
+			break;
+		case R.id.text_my_fans:
 			break;
 		}
 	}
