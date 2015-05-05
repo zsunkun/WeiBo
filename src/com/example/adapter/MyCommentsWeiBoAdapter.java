@@ -27,6 +27,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SimpleAdapter;
@@ -101,17 +103,17 @@ public class MyCommentsWeiBoAdapter extends MyAdapter {
 			mViewHolder.tv_comment.setText(String.valueOf(status
 					.getInt("comments_count")));
 
-			// 点击小图片显示原始大小图片
-			// mViewHolder.image_textImage
-			// .setOnClickListener(new OnClickListener() {
-			// @Override
-			// public void onClick(View v) {
-			// ImageOnClick(itemJson, position);
-			// if (!mLoadingDialog.isShowing())
-			// mLoadingDialog.show();
-			// }
-			// });
+			mViewHolder.my_grid_view
+					.setOnItemClickListener(new OnItemClickListener() {
 
+						@Override
+						public void onItemClick(AdapterView<?> parent,
+								View view, int position, long id) {
+							if (!mLoadingDialog.isShowing())
+								mLoadingDialog.show();
+							ImageOnClick(status, position);
+						}
+					});
 			// 转发微博
 			mViewHolder.tv_repost.setOnClickListener(new OnClickListener() {
 
@@ -135,23 +137,6 @@ public class MyCommentsWeiBoAdapter extends MyAdapter {
 					}
 				}
 			});
-			// 微博原文
-			if (itemJson.has("status")) {
-				mViewHolder.tv_retweeted_status_texts.setText(status
-						.getJSONObject("user").getString("name")
-						+ ":"
-						+ status.getString("text"));
-				if (itemJson.getJSONObject("status").has("pic_urls")) {
-					getImage(status, mViewHolder.my_grid_view, position);
-				}
-				LinearLayout layout = (LinearLayout) convertView
-						.findViewById(R.id.weibo_item_ll_retweeted_status);
-				layout.setVisibility(View.VISIBLE);
-			} else {
-				LinearLayout layout = (LinearLayout) convertView
-						.findViewById(R.id.weibo_item_ll_retweeted_status);
-				layout.setVisibility(View.GONE);
-			}
 
 			// 头像图片
 			String image_head_url = new JSONObject(itemJson.getString("user"))
@@ -173,6 +158,24 @@ public class MyCommentsWeiBoAdapter extends MyAdapter {
 				mViewHolder.image_head.setImageBitmap(head_image);
 			}
 
+			// 微博原文
+			if (itemJson.has("status")) {
+				mViewHolder.tv_retweeted_status_texts.setText(status
+						.getJSONObject("user").getString("name")
+						+ ":"
+						+ status.getString("text"));
+				if (itemJson.getJSONObject("status").has("pic_urls")) {
+					getImage(status, mViewHolder.my_grid_view, position);
+				}
+				LinearLayout layout = (LinearLayout) convertView
+						.findViewById(R.id.weibo_item_ll_retweeted_status);
+				layout.setVisibility(View.VISIBLE);
+			} else {
+				LinearLayout layout = (LinearLayout) convertView
+						.findViewById(R.id.weibo_item_ll_retweeted_status);
+				layout.setVisibility(View.GONE);
+			}
+
 		} catch (Exception e) {
 			Log.i("Exception", "Try Exception:" + e.getMessage());
 		}
@@ -183,20 +186,27 @@ public class MyCommentsWeiBoAdapter extends MyAdapter {
 
 		if (itemJson.has("original_pic")) {
 			try {
-				String iv_original_pic_url = itemJson.getString("original_pic");
+				JSONArray array = itemJson.getJSONArray("pic_urls");
+				String iv_original_pic_url = array.optJSONObject(position)
+						.getString("thumbnail_pic");
+				iv_original_pic_url = iv_original_pic_url
+						.replaceAll("\\\\", "");
+				iv_original_pic_url = iv_original_pic_url.replace(mImageSmall,
+						mImageLarge);
 				mViewHolder.image_original_pic.setTag(iv_original_pic_url);
 				Bitmap xxxx = AsyncImageLoader.loadBitmap(2,
-						(itemJson.getString("original_pic")),
-						mViewHolder.image_original_pic, position,
-						new ImageCallback() {
+						iv_original_pic_url, mViewHolder.image_original_pic,
+						position, new ImageCallback() {
 							@Override
 							public void imageSet(Bitmap bitmap, ImageView iv) {
 								mViewHolder.image_original_pic
 										.setImageBitmap(bitmap);
 								mLoadingDialog.dismiss();
-								mOriginalPicDialog.show();
-								mOriginalPicDialog
-										.setContentView(mOriginalPicView);
+								if (bitmap != null) {
+									mOriginalPicDialog.show();
+									mOriginalPicDialog
+											.setContentView(mOriginalPicView);
+								}
 							}
 
 							@Override
@@ -297,7 +307,7 @@ public class MyCommentsWeiBoAdapter extends MyAdapter {
 			if (itemJson.has("bmiddle_pic")) {
 				url = url.replace(mImageSmall, mImageMiddle);
 			}
-			final Bitmap image_text = AsyncImageLoader.loadBitmap(2, url, null,
+			final Bitmap image_text = AsyncImageLoader.loadBitmap(1, url, null,
 					position, new ImageCallback() {
 						@Override
 						public void imageSet(Bitmap drawable, ImageView iv) {

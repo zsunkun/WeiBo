@@ -27,6 +27,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SimpleAdapter;
@@ -95,16 +97,34 @@ public class WeiBoListAdapter extends MyAdapter {
 			mViewHolder.tv_comment.setText(String.valueOf(itemJson
 					.getInt("comments_count")));
 
-			// // 点击小图片显示原始大小图片
-			// mViewHolder.image_textImage
-			// .setOnClickListener(new OnClickListener() {
-			// @Override
-			// public void onClick(View v) {
-			// ImageOnClick(itemJson, position);
-			// if (!mLoadingDialog.isShowing())
-			// mLoadingDialog.show();
-			// }
-			// });
+			mViewHolder.my_grid_view
+					.setOnItemClickListener(new OnItemClickListener() {
+
+						@Override
+						public void onItemClick(AdapterView<?> parent,
+								View view, int position, long id) {
+							if (!mLoadingDialog.isShowing())
+								mLoadingDialog.show();
+							ImageOnClick(itemJson, position);
+						}
+					});
+
+			mViewHolder.repost_grid_view
+					.setOnItemClickListener(new OnItemClickListener() {
+
+						@Override
+						public void onItemClick(AdapterView<?> parent,
+								View view, int position, long id) {
+							try {
+								ImageOnClick(itemJson
+										.getJSONObject("retweeted_status"),
+										position);
+							} catch (JSONException e) {
+							}
+							if (!mLoadingDialog.isShowing())
+								mLoadingDialog.show();
+						}
+					});
 
 			// 转发微博
 			mViewHolder.tv_repost.setOnClickListener(new OnClickListener() {
@@ -129,6 +149,27 @@ public class WeiBoListAdapter extends MyAdapter {
 					}
 				}
 			});
+
+			// 头像图片
+			String image_head_url = new JSONObject(itemJson.getString("user"))
+					.getString("profile_image_url");
+			mViewHolder.image_head.setTag(image_head_url);
+			Bitmap head_image = AsyncImageLoader.loadBitmap(0, image_head_url,
+					mViewHolder.image_head, position, new ImageCallback() {
+						@Override
+						public void imageSet(Bitmap bitmap, ImageView iv) {
+							iv.setImageBitmap(bitmap);
+						}
+
+						@Override
+						public void imageLoadDone(Bitmap bitmap) {
+						}
+					});
+
+			if (head_image != null) {
+				mViewHolder.image_head.setImageBitmap(head_image);
+			}
+
 			// 微博原文
 			if (itemJson.has("retweeted_status")) {
 				/* holder.tv_retweeted_status_texts */
@@ -150,26 +191,6 @@ public class WeiBoListAdapter extends MyAdapter {
 				LinearLayout layout = (LinearLayout) convertView
 						.findViewById(R.id.weibo_item_ll_retweeted_status);
 				layout.setVisibility(View.GONE);
-			}
-
-			// 头像图片
-			String image_head_url = new JSONObject(itemJson.getString("user"))
-					.getString("profile_image_url");
-			mViewHolder.image_head.setTag(image_head_url);
-			Bitmap head_image = AsyncImageLoader.loadBitmap(0, image_head_url,
-					mViewHolder.image_head, position, new ImageCallback() {
-						@Override
-						public void imageSet(Bitmap bitmap, ImageView iv) {
-							iv.setImageBitmap(bitmap);
-						}
-
-						@Override
-						public void imageLoadDone(Bitmap bitmap) {
-						}
-					});
-
-			if (head_image != null) {
-				mViewHolder.image_head.setImageBitmap(head_image);
 			}
 
 			// 微博图片
@@ -215,7 +236,7 @@ public class WeiBoListAdapter extends MyAdapter {
 			if (itemJson.has("bmiddle_pic")) {
 				url = url.replace(mImageSmall, mImageMiddle);
 			}
-			final Bitmap image_text = AsyncImageLoader.loadBitmap(2, url, null,
+			final Bitmap image_text = AsyncImageLoader.loadBitmap(1, url, null,
 					position, new ImageCallback() {
 						@Override
 						public void imageSet(Bitmap drawable, ImageView iv) {
@@ -237,32 +258,36 @@ public class WeiBoListAdapter extends MyAdapter {
 				gridViewAdapter.notifyDataSetChanged();
 			}
 		}
-
 	}
 
 	private void ImageOnClick(JSONObject itemJson, int position) {
-
 		if (itemJson.has("original_pic")) {
 			try {
-				String iv_original_pic_url = itemJson.getString("original_pic");
+				JSONArray array = itemJson.getJSONArray("pic_urls");
+				String iv_original_pic_url = array.optJSONObject(position)
+						.getString("thumbnail_pic");
+				iv_original_pic_url = iv_original_pic_url
+						.replaceAll("\\\\", "");
+				iv_original_pic_url = iv_original_pic_url.replace(mImageSmall,
+						mImageLarge);
 				mViewHolder.image_original_pic.setTag(iv_original_pic_url);
 				Bitmap xxxx = AsyncImageLoader.loadBitmap(2,
-						(itemJson.getString("original_pic")),
-						mViewHolder.image_original_pic, position,
-						new ImageCallback() {
+						iv_original_pic_url, mViewHolder.image_original_pic,
+						position, new ImageCallback() {
 							@Override
 							public void imageSet(Bitmap bitmap, ImageView iv) {
 								mViewHolder.image_original_pic
 										.setImageBitmap(bitmap);
 								mLoadingDialog.dismiss();
-								mOriginalPicDialog.show();
-								mOriginalPicDialog
-										.setContentView(mOriginalPicView);
+								if (bitmap != null) {
+									mOriginalPicDialog.show();
+									mOriginalPicDialog
+											.setContentView(mOriginalPicView);
+								}
 							}
 
 							@Override
 							public void imageLoadDone(Bitmap bitmap) {
-
 							}
 						});
 				if (xxxx != null) {

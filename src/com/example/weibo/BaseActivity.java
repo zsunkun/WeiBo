@@ -120,8 +120,6 @@ public abstract class BaseActivity extends FragmentActivity implements
 		mItemComment.setOnClickListener(this);
 		mItemHome = (LinearLayout) findViewById(R.id.item_home);
 		mItemHome.setOnClickListener(this);
-		mItemMessage = (LinearLayout) findViewById(R.id.item_msg);
-		mItemMessage.setOnClickListener(this);
 		mTopUserName = (TextView) findViewById(R.id.text_user_name);
 		mWeibo = (TextView) findViewById(R.id.text_my_weibo);
 		mWeibo.setOnClickListener(this);
