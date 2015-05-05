@@ -1,15 +1,17 @@
 package com.example.adapter;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.example.ui.CommentDialog;
+import com.example.ui.GridViewInList;
 import com.example.utils.AsyncImageLoader;
 import com.example.utils.AsyncImageLoader.ImageCallback;
-import com.example.utils.NetworkUtils;
 import com.example.utils.Tools;
 import com.example.weibo.R;
 import com.weibo.sdk.android.WeiboException;
@@ -27,13 +29,17 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.SimpleAdapter.ViewBinder;
 
 public class MyCommentsWeiBoAdapter extends MyAdapter {
 
 	private ViewHolder mViewHolder;
-	private String textImage;
+	private String mImageSmall = "thumbnail";
+	private String mImageMiddle = "bmiddle";
+	private String mImageLarge = "large";
 
 	public MyCommentsWeiBoAdapter(Activity context, JSONArray jsonArray,
 			StatusesAPI statuses) {
@@ -56,8 +62,8 @@ public class MyCommentsWeiBoAdapter extends MyAdapter {
 			mViewHolder.tv_text = (TextView) convertView
 					.findViewById(R.id.weibo_item_text);
 
-			mViewHolder.image_textImage = (ImageView) convertView
-					.findViewById(R.id.weibo_item_textImage);
+			mViewHolder.my_grid_view = (GridViewInList) convertView
+					.findViewById(R.id.gridView_repost);
 
 			mViewHolder.tv_retweeted_status_texts = (TextView) convertView
 					.findViewById(R.id.weibo_item_retweeted_status_texts);
@@ -82,7 +88,7 @@ public class MyCommentsWeiBoAdapter extends MyAdapter {
 		try {
 			final JSONObject itemJson = getItem(position);
 			final JSONObject status = itemJson.getJSONObject("status");
-			if (itemJson == null||status==null) {
+			if (itemJson == null || status == null) {
 				return null;
 			}
 			mViewHolder.tv_time.setText(Tools.formatDate(itemJson
@@ -96,15 +102,15 @@ public class MyCommentsWeiBoAdapter extends MyAdapter {
 					.getInt("comments_count")));
 
 			// 点击小图片显示原始大小图片
-			mViewHolder.image_textImage
-					.setOnClickListener(new OnClickListener() {
-						@Override
-						public void onClick(View v) {
-							ImageOnClick(itemJson, position);
-							if (!mLoadingDialog.isShowing())
-								mLoadingDialog.show();
-						}
-					});
+			// mViewHolder.image_textImage
+			// .setOnClickListener(new OnClickListener() {
+			// @Override
+			// public void onClick(View v) {
+			// ImageOnClick(itemJson, position);
+			// if (!mLoadingDialog.isShowing())
+			// mLoadingDialog.show();
+			// }
+			// });
 
 			// 转发微博
 			mViewHolder.tv_repost.setOnClickListener(new OnClickListener() {
@@ -131,12 +137,13 @@ public class MyCommentsWeiBoAdapter extends MyAdapter {
 			});
 			// 微博原文
 			if (itemJson.has("status")) {
-				mViewHolder.tv_retweeted_status_texts.setText(itemJson
-						.getJSONObject("status")
+				mViewHolder.tv_retweeted_status_texts.setText(status
 						.getJSONObject("user").getString("name")
 						+ ":"
-						+ itemJson.getJSONObject("status").getString(
-								"text"));
+						+ status.getString("text"));
+				if (itemJson.getJSONObject("status").has("pic_urls")) {
+					getImage(status, mViewHolder.my_grid_view, position);
+				}
 				LinearLayout layout = (LinearLayout) convertView
 						.findViewById(R.id.weibo_item_ll_retweeted_status);
 				layout.setVisibility(View.VISIBLE);
@@ -166,38 +173,6 @@ public class MyCommentsWeiBoAdapter extends MyAdapter {
 				mViewHolder.image_head.setImageBitmap(head_image);
 			}
 
-			// 内容中图片 如果是wifi用中等缩略图，如果是gprs用小缩略图
-			if (NetworkUtils.getNetworkState(mContext) == NetworkUtils.WIFI) {
-				textImage = "bmiddle_pic";
-			} else if (NetworkUtils.getNetworkState(mContext) == NetworkUtils.MOBILE) {
-				textImage = "thumbnail_pic";
-			}
-
-			if (itemJson.has(textImage)) {// thumbnail_pic
-				mViewHolder.image_textImage.setVisibility(View.VISIBLE);
-				String image_textImage_url = itemJson.getString(textImage);
-				mViewHolder.image_textImage.setTag(image_textImage_url);
-				Bitmap image_text = AsyncImageLoader.loadBitmap(1,
-						(itemJson.getString(textImage)),
-						mViewHolder.image_textImage, position,
-						new ImageCallback() {
-							@Override
-							public void imageSet(Bitmap drawable, ImageView iv) {
-								iv.setImageBitmap(drawable);
-							}
-
-							@Override
-							public void imageLoadDone(Bitmap bitmap) {
-							}
-						});
-
-				if (image_text != null) {
-					mViewHolder.image_textImage.setImageBitmap(image_text);
-					mViewHolder.image_textImage.setVisibility(View.VISIBLE);
-				}
-			} else {
-				mViewHolder.image_textImage.setVisibility(View.GONE);
-			}
 		} catch (Exception e) {
 			Log.i("Exception", "Try Exception:" + e.getMessage());
 		}
@@ -291,11 +266,68 @@ public class MyCommentsWeiBoAdapter extends MyAdapter {
 		}
 	}
 
+	private void getImage(JSONObject itemJson, GridViewInList gridView,
+			int position) throws JSONException {
+		final ArrayList<HashMap<String, Object>> gridViewData = new ArrayList<HashMap<String, Object>>();
+		final SimpleAdapter gridViewAdapter = new SimpleAdapter(mContext,
+				gridViewData, // 数据源
+				R.layout.layout_image_item, // xml实现
+				new String[] { "image" }, // 对应map的Key
+				new int[] { R.id.weibo_item_textImage }); // 对应R的Id
+		gridViewAdapter.setViewBinder(new ViewBinder() {
+
+			public boolean setViewValue(View view, Object data,
+					String textRepresentation) {
+				// 判断是否为我们要处理的对象
+				if (view instanceof ImageView && data instanceof Bitmap) {
+					ImageView iv = (ImageView) view;
+					iv.setImageBitmap((Bitmap) data);
+					return true;
+				} else
+					return false;
+			}
+
+		});
+		gridView.setVisibility(View.VISIBLE);
+		gridView.setAdapter(gridViewAdapter);
+		JSONArray picIds = itemJson.getJSONArray("pic_urls");
+		for (int i = 0; i < picIds.length(); i++) {
+			String url = picIds.optJSONObject(i).getString("thumbnail_pic");
+			url = url.replaceAll("\\\\", "");
+			if (itemJson.has("bmiddle_pic")) {
+				url = url.replace(mImageSmall, mImageMiddle);
+			}
+			final Bitmap image_text = AsyncImageLoader.loadBitmap(2, url, null,
+					position, new ImageCallback() {
+						@Override
+						public void imageSet(Bitmap drawable, ImageView iv) {
+						}
+
+						@Override
+						public void imageLoadDone(Bitmap bitmap) {
+							HashMap<String, Object> map = new HashMap<String, Object>();
+							map.put("image", bitmap);
+							gridViewData.add(map);
+							gridViewAdapter.notifyDataSetChanged();
+						}
+					});
+
+			if (image_text != null) {
+				HashMap<String, Object> map = new HashMap<String, Object>();
+				map.put("image", image_text);
+				gridViewData.add(map);
+				gridViewAdapter.notifyDataSetChanged();
+			}
+		}
+
+	}
+
 	static class ViewHolder {
-		public ImageView image_head, image_textImage, image_original_pic;
+		public ImageView image_head, image_original_pic;
 		public TextView tv_name, tv_text, tv_time;
 		public TextView tv_repost, tv_comment;
 		public TextView tv_retweeted_status_texts;
+		public GridViewInList my_grid_view;
 
 		public static void resetViewHolder(ViewHolder viewHolder) {
 			viewHolder.tv_name.setText(null);
@@ -308,9 +340,6 @@ public class MyCommentsWeiBoAdapter extends MyAdapter {
 			}
 
 			viewHolder.image_head.setImageBitmap(null);
-			if (viewHolder.image_textImage != null) {
-				viewHolder.image_textImage.setImageBitmap(null);
-			}
 
 			if (viewHolder.image_original_pic != null) {
 				viewHolder.image_original_pic.setImageBitmap(null);
