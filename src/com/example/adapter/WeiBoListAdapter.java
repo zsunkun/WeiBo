@@ -116,13 +116,13 @@ public class WeiBoListAdapter extends MyAdapter {
 						public void onItemClick(AdapterView<?> parent,
 								View view, int position, long id) {
 							try {
+								if (!mLoadingDialog.isShowing())
+									mLoadingDialog.show();
 								ImageOnClick(itemJson
 										.getJSONObject("retweeted_status"),
 										position);
 							} catch (JSONException e) {
 							}
-							if (!mLoadingDialog.isShowing())
-								mLoadingDialog.show();
 						}
 					});
 
