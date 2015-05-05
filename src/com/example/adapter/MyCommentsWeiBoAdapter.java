@@ -156,6 +156,10 @@ public class MyCommentsWeiBoAdapter extends MyAdapter {
 						public void imageSet(Bitmap bitmap, ImageView iv) {
 							iv.setImageBitmap(bitmap);
 						}
+
+						@Override
+						public void imageLoadDone(Bitmap bitmap) {
+						}
 					});
 
 			if (head_image != null) {
@@ -180,6 +184,10 @@ public class MyCommentsWeiBoAdapter extends MyAdapter {
 							@Override
 							public void imageSet(Bitmap drawable, ImageView iv) {
 								iv.setImageBitmap(drawable);
+							}
+
+							@Override
+							public void imageLoadDone(Bitmap bitmap) {
 							}
 						});
 
@@ -214,6 +222,10 @@ public class MyCommentsWeiBoAdapter extends MyAdapter {
 								mOriginalPicDialog.show();
 								mOriginalPicDialog
 										.setContentView(mOriginalPicView);
+							}
+
+							@Override
+							public void imageLoadDone(Bitmap bitmap) {
 							}
 						});
 				if (xxxx != null) {

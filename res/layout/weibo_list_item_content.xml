@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:background="@android:color/transparent"
     android:orientation="horizontal"
     android:padding="5dp" >
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:background="@drawable/shape_white_round_rectancle"
         android:orientation="horizontal"
         android:padding="10dp" >
@@ -26,7 +26,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
             android:orientation="vertical" >
 
@@ -75,22 +75,42 @@
                     android:layout_height="wrap_content"
                     android:textColor="#000000" />
 
-                <ImageView
-                    android:id="@+id/weibo_item_textImage"
+                <com.example.ui.GridViewInList
+                    android:id="@+id/gridView_self"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="3dp" />
+                    android:layout_marginTop="3dp"
+                    android:gravity="center"
+                    android:horizontalSpacing="10dp"
+                    android:numColumns="3"
+                    android:stretchMode="columnWidth"
+                    android:verticalSpacing="10dp" >
+                </com.example.ui.GridViewInList>
 
                 <LinearLayout
                     android:id="@+id/weibo_item_ll_retweeted_status"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:orientation="vertical"
                     android:background="@drawable/retweeted_status" >
 
                     <TextView
                         android:id="@+id/weibo_item_retweeted_status_texts"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content" />
+
+                    <com.example.ui.GridViewInList
+                        android:id="@+id/gridView_repost"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="3dp"
+                        android:gravity="center"
+                        android:horizontalSpacing="10dp"
+                        android:numColumns="3"
+                        android:stretchMode="columnWidth"
+                        android:verticalSpacing="10dp"
+                        android:visibility="gone" >
+                    </com.example.ui.GridViewInList>
                 </LinearLayout>
             </LinearLayout>
 

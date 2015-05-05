@@ -55,6 +55,8 @@ public class AsyncImageLoader {
 				if (imageView != null && !"".equals(url)
 						&& imageView.getTag().toString().equals(url)) {
 					callback.imageSet((Bitmap) msg.obj, imageView);
+				}else if (imageView == null){
+					callback.imageLoadDone((Bitmap) msg.obj);
 				}
 			}
 		};
@@ -82,6 +84,7 @@ public class AsyncImageLoader {
 		 * @param iv
 		 */
 		public void imageSet(Bitmap bitmap, ImageView iv);
+		public void imageLoadDone(Bitmap bitmap);
 
 	}
 

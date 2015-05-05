@@ -83,6 +83,10 @@ public class CommentsAdapter extends BaseAdapter {
 						public void imageSet(Bitmap bitmap, ImageView iv) {
 							iv.setImageBitmap(bitmap);
 						}
+
+						@Override
+						public void imageLoadDone(Bitmap bitmap) {
+						}
 					});
 
 			if (head_image != null) {
