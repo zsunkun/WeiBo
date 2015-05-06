@@ -233,9 +233,9 @@ public class WeiBoListAdapter extends MyAdapter {
 		for (int i = 0; i < picIds.length(); i++) {
 			String url = picIds.optJSONObject(i).getString("thumbnail_pic");
 			url = url.replaceAll("\\\\", "");
-			if (itemJson.has("bmiddle_pic")) {
-				url = url.replace(mImageSmall, mImageMiddle);
-			}
+//			if (itemJson.has("bmiddle_pic")) {
+//				url = url.replace(mImageSmall, mImageMiddle);
+//			}
 			final Bitmap image_text = AsyncImageLoader.loadBitmap(1, url, null,
 					position, new ImageCallback() {
 						@Override

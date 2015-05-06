@@ -7,7 +7,6 @@ import com.example.ui.LoadingDialog;
 import com.example.weibo.R;
 import com.weibo.sdk.android.api.StatusesAPI;
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,7 +26,7 @@ public abstract class MyAdapter extends BaseAdapter {
 		mContext = context;
 		mJsonArray = jsonArray;
 		mStatuses = statuses;
-		mOriginalPicDialog = new AlertDialog.Builder(mContext).create();
+		mOriginalPicDialog = new Dialog(mContext, R.style.FullDialog);
 		mOriginalPicView = LayoutInflater.from(mContext).inflate(
 				R.layout.view_weibo_original_pic, null);
 		mLoadingDialog = new LoadingDialog(mContext);
