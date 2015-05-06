@@ -6,3 +6,5 @@ project.properties
 .settings/
 slidingmenu_library/bin/*
 slidingmenu_library/gen/*
+Photo/bin/*
+Photo/gen/*
