@@ -334,6 +334,8 @@ public abstract class BaseActivity extends FragmentActivity implements
 		case R.id.text_my_weibo:
 			StartActivity(MyWeiboActivity.class);
 			break;
+		case R.id.item_about_us:
+			StartActivity(AboutUsActivity.class);
 		case R.id.text_my_attention:
 			break;
 		case R.id.text_my_fans:

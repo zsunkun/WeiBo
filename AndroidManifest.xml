@@ -58,6 +58,9 @@
         <activity
             android:name=".MyWeiboActivity"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
+        <activity
+            android:name=".AboutUsActivity"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
         <!-- write weibo start -->
         <activity
             android:name="com.king.photo.activity.MainActivity"
