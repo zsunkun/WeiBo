@@ -10,6 +10,7 @@ import org.json.JSONObject;
 
 import com.example.ui.CommentDialog;
 import com.example.ui.GridViewInList;
+import com.example.ui.ScaleImage;
 import com.example.utils.AsyncImageLoader;
 import com.example.utils.AsyncImageLoader.ImageCallback;
 import com.example.utils.Tools;
@@ -77,7 +78,7 @@ public class MyCommentsWeiBoAdapter extends MyAdapter {
 			mViewHolder.tv_comment = (TextView) convertView
 					.findViewById(R.id.weibo_item_comment);
 
-			mViewHolder.image_original_pic = (ImageView) mOriginalPicView
+			mViewHolder.image_original_pic = (ScaleImage) mOriginalPicView
 					.findViewById(R.id.iv_original_pic);
 
 			convertView.setTag(mViewHolder);
@@ -333,11 +334,12 @@ public class MyCommentsWeiBoAdapter extends MyAdapter {
 	}
 
 	static class ViewHolder {
-		public ImageView image_head, image_original_pic;
+		public ImageView image_head;
 		public TextView tv_name, tv_text, tv_time;
 		public TextView tv_repost, tv_comment;
 		public TextView tv_retweeted_status_texts;
 		public GridViewInList my_grid_view;
+		public ScaleImage image_original_pic;
 
 		public static void resetViewHolder(ViewHolder viewHolder) {
 			viewHolder.tv_name.setText(null);
