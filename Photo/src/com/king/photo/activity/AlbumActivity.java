@@ -57,6 +57,7 @@ public class AlbumActivity extends Activity {
 	public static Bitmap bitmap;
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		Res.init(this);
 		setContentView(Res.getLayoutID("plugin_camera_album"));
 		PublicWay.activityList.add(this);
 		mContext = this;
@@ -74,8 +75,6 @@ public class AlbumActivity extends Activity {
 		  
         @Override  
         public void onReceive(Context context, Intent intent) {  
-        	//mContext.unregisterReceiver(this);
-            // TODO Auto-generated method stub  
         	gridImageAdapter.notifyDataSetChanged();
         }  
     };  
@@ -96,8 +95,8 @@ public class AlbumActivity extends Activity {
 	private class AlbumSendListener implements OnClickListener {
 		public void onClick(View v) {
 			overridePendingTransition(R.anim.activity_translate_in, R.anim.activity_translate_out);
-			intent.setClass(mContext, MainActivity.class);
-			startActivity(intent);
+//			intent.setClass(mContext, MainActivity.class);
+//			startActivity(intent);
 			finish();
 		}
 
@@ -114,9 +113,10 @@ public class AlbumActivity extends Activity {
 	// 取消按钮的监听
 	private class CancelListener implements OnClickListener {
 		public void onClick(View v) {
-			Bimp.tempSelectBitmap.clear();
-			intent.setClass(mContext, MainActivity.class);
-			startActivity(intent);
+//			Bimp.tempSelectBitmap.clear();
+//			intent.setClass(mContext, MainActivity.class);
+//			startActivity(intent);
+			finish();
 		}
 	}
 

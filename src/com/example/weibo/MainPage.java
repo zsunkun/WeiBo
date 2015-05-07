@@ -7,7 +7,6 @@ import com.example.adapter.WeiBoListAdapter;
 import com.example.api.AccessTokenKeeper;
 import com.example.utils.DisplayUtils;
 import com.example.weibo.LoginActivity.UserCurrent;
-import com.king.photo.activity.MainActivity;
 import com.weibo.sdk.android.Oauth2AccessToken;
 import com.weibo.sdk.android.api.StatusesAPI;
 import com.weibo.sdk.android.api.WeiboAPI;
@@ -50,7 +49,7 @@ public class MainPage extends BaseActivity implements OnClickListener,
 
 			@Override
 			public void onClick(View v) {
-				StartActivity(MainActivity.class);
+				StartActivity(WriteWeiboActivity.class);
 			}
 		});
 	}

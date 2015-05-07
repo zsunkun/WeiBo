@@ -53,9 +53,10 @@ public class ImageFile extends Activity {
 
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
-			Intent intent = new Intent();
-			intent.setClass(mContext, MainActivity.class);
-			startActivity(intent);
+//			Intent intent = new Intent();
+//			intent.setClass(mContext, MainActivity.class);
+//			startActivity(intent);
+			finish();
 		}
 		
 		return true;

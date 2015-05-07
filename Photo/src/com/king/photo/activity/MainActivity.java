@@ -13,7 +13,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -84,7 +83,7 @@ public class MainActivity extends Activity {
 		Button bt1 = (Button) view
 				.findViewById(R.id.item_popupwindows_camera);
 		Button bt2 = (Button) view
-				.findViewById(R.id.item_popupwindows_Photo);
+				.findViewById(R.id.item_popupwindows_photo);
 		Button bt3 = (Button) view
 				.findViewById(R.id.item_popupwindows_cancel);
 		parent.setOnClickListener(new OnClickListener() {
@@ -296,7 +295,6 @@ public class MainActivity extends Activity {
 					PublicWay.activityList.get(i).finish();
 				}
 			}
-//			System.exit(0);
 		}
 		return true;
 	}
