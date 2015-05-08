@@ -37,4 +37,9 @@ public class NetworkUtils {
 		}
 		return NONE;
 	}
+
+	public static boolean isHaveNetWork(Context context) {
+		int netState = getNetworkState(context);
+		return netState != NONE;
+	}
 }

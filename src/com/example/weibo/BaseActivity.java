@@ -1,14 +1,11 @@
 package com.example.weibo;
 
 import java.io.IOException;
-import java.text.BreakIterator;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.example.adapter.MyAdapter;
-import com.example.api.User;
 import com.example.ui.LoadingDialog;
 import com.example.weibo.LoginActivity.UserCurrent;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;

@@ -24,6 +24,7 @@ import com.king.photo.util.Bimp;
 import com.king.photo.util.ImageItem;
 import com.king.photo.util.PublicWay;
 import com.king.photo.util.Res;
+
 /**
  * 这个是显示一个文件夹里面的所有图片时的界面
  *
@@ -45,6 +46,7 @@ public class ShowAllPhoto extends Activity {
 	private Intent intent;
 	private Context mContext;
 	public static ArrayList<ImageItem> dataList = new ArrayList<ImageItem>();
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -54,8 +56,10 @@ public class ShowAllPhoto extends Activity {
 		back = (Button) findViewById(Res.getWidgetID("showallphoto_back"));
 		cancel = (Button) findViewById(Res.getWidgetID("showallphoto_cancel"));
 		preview = (Button) findViewById(Res.getWidgetID("showallphoto_preview"));
-		okButton = (Button) findViewById(Res.getWidgetID("showallphoto_ok_button"));
-		headTitle = (TextView) findViewById(Res.getWidgetID("showallphoto_headtitle"));
+		okButton = (Button) findViewById(Res
+				.getWidgetID("showallphoto_ok_button"));
+		headTitle = (TextView) findViewById(Res
+				.getWidgetID("showallphoto_headtitle"));
 		this.intent = getIntent();
 		String folderName = intent.getStringExtra("folderName");
 		if (folderName.length() > 8) {
@@ -69,15 +73,15 @@ public class ShowAllPhoto extends Activity {
 		initListener();
 		isShowOkBt();
 	}
-	
-	BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {  
-		  
-        @Override  
-        public void onReceive(Context context, Intent intent) {  
-            // TODO Auto-generated method stub  
-        	gridImageAdapter.notifyDataSetChanged();
-        }  
-    };  
+
+	BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			// TODO Auto-generated method stub
+			gridImageAdapter.notifyDataSetChanged();
+		}
+	};
 
 	private class PreviewListener implements OnClickListener {
 		public void onClick(View v) {
@@ -98,31 +102,36 @@ public class ShowAllPhoto extends Activity {
 		}
 
 		public void onClick(View v) {
-			intent.setClass(ShowAllPhoto.this, ImageFile.class);
-			startActivity(intent);
+			// intent.setClass(ShowAllPhoto.this, ImageFile.class);
+			// startActivity(intent);
+			finish();
 		}
 
 	}
 
 	private class CancelListener implements OnClickListener {// 取消按钮的监听
 		public void onClick(View v) {
-			//清空选择的图片
+			// 清空选择的图片
 			Bimp.tempSelectBitmap.clear();
-			intent.setClass(mContext, MainActivity.class);
-			startActivity(intent);
+			// intent.setClass(mContext, MainActivity.class);
+			// startActivity(intent);
+			finish();
 		}
 	}
 
 	private void init() {
-		IntentFilter filter = new IntentFilter("data.broadcast.action");  
-		registerReceiver(broadcastReceiver, filter);  
-		progressBar = (ProgressBar) findViewById(Res.getWidgetID("showallphoto_progressbar"));
+		IntentFilter filter = new IntentFilter("data.broadcast.action");
+		registerReceiver(broadcastReceiver, filter);
+		progressBar = (ProgressBar) findViewById(Res
+				.getWidgetID("showallphoto_progressbar"));
 		progressBar.setVisibility(View.GONE);
-		gridView = (GridView) findViewById(Res.getWidgetID("showallphoto_myGrid"));
-		gridImageAdapter = new AlbumGridViewAdapter(this,dataList,
+		gridView = (GridView) findViewById(Res
+				.getWidgetID("showallphoto_myGrid"));
+		gridImageAdapter = new AlbumGridViewAdapter(this, dataList,
 				Bimp.tempSelectBitmap);
 		gridView.setAdapter(gridImageAdapter);
-		okButton = (Button) findViewById(Res.getWidgetID("showallphoto_ok_button"));
+		okButton = (Button) findViewById(Res
+				.getWidgetID("showallphoto_ok_button"));
 	}
 
 	private void initListener() {
@@ -130,12 +139,13 @@ public class ShowAllPhoto extends Activity {
 		gridImageAdapter
 				.setOnItemClickListener(new AlbumGridViewAdapter.OnItemClickListener() {
 					public void onItemClick(final ToggleButton toggleButton,
-							int position, boolean isChecked,
-							Button button) {
-						if (Bimp.tempSelectBitmap.size() >= PublicWay.num&&isChecked) {
+							int position, boolean isChecked, Button button) {
+						if (Bimp.tempSelectBitmap.size() >= PublicWay.num
+								&& isChecked) {
 							button.setVisibility(View.GONE);
 							toggleButton.setChecked(false);
-							Toast.makeText(ShowAllPhoto.this, Res.getString("only_choose_num"), 200)
+							Toast.makeText(ShowAllPhoto.this,
+									Res.getString("only_choose_num"), 200)
 									.show();
 							return;
 						}
@@ -143,12 +153,15 @@ public class ShowAllPhoto extends Activity {
 						if (isChecked) {
 							button.setVisibility(View.VISIBLE);
 							Bimp.tempSelectBitmap.add(dataList.get(position));
-							okButton.setText(Res.getString("finish")+"(" + Bimp.tempSelectBitmap.size()
-									+ "/"+PublicWay.num+")");
+							okButton.setText(Res.getString("finish") + "("
+									+ Bimp.tempSelectBitmap.size() + "/"
+									+ PublicWay.num + ")");
 						} else {
 							button.setVisibility(View.GONE);
 							Bimp.tempSelectBitmap.remove(dataList.get(position));
-							okButton.setText(Res.getString("finish")+"(" + Bimp.tempSelectBitmap.size() + "/"+PublicWay.num+")");
+							okButton.setText(Res.getString("finish") + "("
+									+ Bimp.tempSelectBitmap.size() + "/"
+									+ PublicWay.num + ")");
 						}
 						isShowOkBt();
 					}
@@ -159,14 +172,14 @@ public class ShowAllPhoto extends Activity {
 			@Override
 			public void onClick(View v) {
 				okButton.setClickable(false);
-//				if (PublicWay.photoService != null) {
-//					PublicWay.selectedDataList.addAll(Bimp.tempSelectBitmap);
-//					Bimp.tempSelectBitmap.clear();
-//					PublicWay.photoService.onActivityResult(0, -2,
-//							intent);
-//				}
-				intent.setClass(mContext, MainActivity.class);
-				startActivity(intent);
+				// if (PublicWay.photoService != null) {
+				// PublicWay.selectedDataList.addAll(Bimp.tempSelectBitmap);
+				// Bimp.tempSelectBitmap.clear();
+				// PublicWay.photoService.onActivityResult(0, -2,
+				// intent);
+				// }
+				// intent.setClass(mContext, MainActivity.class);
+				// startActivity(intent);
 				// Intent intent = new Intent();
 				// Bundle bundle = new Bundle();
 				// bundle.putStringArrayList("selectedDataList",
@@ -183,7 +196,8 @@ public class ShowAllPhoto extends Activity {
 
 	public void isShowOkBt() {
 		if (Bimp.tempSelectBitmap.size() > 0) {
-			okButton.setText(Res.getString("finish")+"(" + Bimp.tempSelectBitmap.size() + "/"+PublicWay.num+")");
+			okButton.setText(Res.getString("finish") + "("
+					+ Bimp.tempSelectBitmap.size() + "/" + PublicWay.num + ")");
 			preview.setPressed(true);
 			okButton.setPressed(true);
 			preview.setClickable(true);
@@ -191,7 +205,8 @@ public class ShowAllPhoto extends Activity {
 			okButton.setTextColor(Color.WHITE);
 			preview.setTextColor(Color.WHITE);
 		} else {
-			okButton.setText(Res.getString("finish")+"(" + Bimp.tempSelectBitmap.size() + "/"+PublicWay.num+")");
+			okButton.setText(Res.getString("finish") + "("
+					+ Bimp.tempSelectBitmap.size() + "/" + PublicWay.num + ")");
 			preview.setPressed(false);
 			preview.setClickable(false);
 			okButton.setPressed(false);

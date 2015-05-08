@@ -3,7 +3,6 @@ package com.king.photo.activity;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
@@ -45,9 +44,10 @@ public class ImageFile extends Activity {
 		public void onClick(View v) {
 			//清空选择的图片
 			Bimp.tempSelectBitmap.clear();
-			Intent intent = new Intent();
-			intent.setClass(mContext, MainActivity.class);
-			startActivity(intent);
+//			Intent intent = new Intent();
+//			intent.setClass(mContext, MainActivity.class);
+//			startActivity(intent);
+			finish();
 		}
 	}
 

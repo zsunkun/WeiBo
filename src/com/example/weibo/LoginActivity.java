@@ -14,6 +14,7 @@ import com.example.api.User;
 import com.example.api.UserInfoHandler;
 import com.example.db.UserHandler;
 import com.example.utils.Constants;
+import com.example.utils.NetworkUtils;
 import com.weibo.sdk.android.Oauth2AccessToken;
 import com.weibo.sdk.android.Weibo;
 import com.weibo.sdk.android.WeiboAuthListener;
@@ -175,13 +176,20 @@ public class LoginActivity extends Activity implements OnClickListener {
 		switch (v.getId()) {
 		case R.id.login_submit:
 			// 保存当前登录的用户
-			UserCurrent.currentUser = mCurrentUser;
-			Intent intent = new Intent(LoginActivity.this, MainPage.class);
-			startActivity(intent);
-			LoginActivity.this.finish();
+			if (NetworkUtils.isHaveNetWork(this)) {
+				UserCurrent.currentUser = mCurrentUser;
+				Intent intent = new Intent(LoginActivity.this, MainPage.class);
+				startActivity(intent);
+				LoginActivity.this.finish();
+			} else {
+				Toast.makeText(this, "网络错误，请稍后再试", Toast.LENGTH_SHORT).show();
+			}
 			break;
 		case R.id.login_authorize:
-			startAuth();
+			if (NetworkUtils.isHaveNetWork(this))
+				startAuth();
+			else
+				Toast.makeText(this, "网络错误，请稍后再试", Toast.LENGTH_SHORT).show();
 			break;
 		default:
 			break;

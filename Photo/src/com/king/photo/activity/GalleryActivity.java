@@ -114,8 +114,9 @@ public class GalleryActivity extends Activity {
 	private class BackListener implements OnClickListener {
 
 		public void onClick(View v) {
-			intent.setClass(GalleryActivity.this, ImageFile.class);
-			startActivity(intent);
+//			intent.setClass(GalleryActivity.this, ImageFile.class);
+//			startActivity(intent);
+			finish();
 		}
 	}
 	
@@ -146,8 +147,8 @@ public class GalleryActivity extends Activity {
 	private class GallerySendListener implements OnClickListener {
 		public void onClick(View v) {
 			finish();
-			intent.setClass(mContext,MainActivity.class);
-			startActivity(intent);
+//			intent.setClass(mContext,MainActivity.class);
+//			startActivity(intent);
 		}
 
 	}
